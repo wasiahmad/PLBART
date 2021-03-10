@@ -1,7 +1,7 @@
 # PLBART
 Code pre-release of our work, [Unified Pre-training for Program Understanding and Generation]() accepted at NAACL 2021.
 
-#### Note. A detailed documentation is coming soon.
+**Note. [A detailed documentation is coming soon.]()**
 
 ### Pre-training data
 
@@ -12,11 +12,11 @@ PLBART is pre-trained on Java and Python functions and natural language descript
 
 We evaluated PLBART on five tasks.
 
-- Code summarization [[info](https://github.com/microsoft/CodeXGLUE/tree/main/Code-Text/code-to-text#dataset)]
-- Code generation [[info](https://github.com/microsoft/CodeXGLUE/tree/main/Text-Code/text-to-code#task-definition)]
-- Code translation [[info](https://github.com/microsoft/CodeXGLUE/tree/main/Code-Code/code-to-code-trans#task-definition)]
-- Clone detection [[info](https://github.com/microsoft/CodeXGLUE/tree/main/Code-Code/Clone-detection-BigCloneBench#task-definition)]
-- Vulnerability detection [[info](https://github.com/microsoft/CodeXGLUE/tree/main/Code-Code/Defect-detection#codexglue----defect-detection)]
+- Code summarization [[REF](https://github.com/microsoft/CodeXGLUE/tree/main/Code-Text/code-to-text#dataset)]
+- Code generation [[REF](https://github.com/microsoft/CodeXGLUE/tree/main/Text-Code/text-to-code#task-definition)]
+- Code translation [[REF](https://github.com/microsoft/CodeXGLUE/tree/main/Code-Code/code-to-code-trans#task-definition)]
+- Clone detection [[REF](https://github.com/microsoft/CodeXGLUE/tree/main/Code-Code/Clone-detection-BigCloneBench#task-definition)]
+- Vulnerability REF [[REF](https://github.com/microsoft/CodeXGLUE/tree/main/Code-Code/Defect-detection#codexglue----defect-detection)]
 
 
 ### Notes
