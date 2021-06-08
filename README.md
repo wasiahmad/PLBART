@@ -35,29 +35,40 @@ We fine-tune and evaluate PLBART on three types of tasks.
         <tr>
             <th>Type</th>
             <th>Task</th>
+            <th>Data</th>
+            <th>Scripts</th>
         </tr>
     </thead>
     <tbody>
         <tr>
             <td>Code to Text</td>
             <td><a href="https://github.com/microsoft/CodeXGLUE/tree/main/Code-Text/code-to-text" target="_blank">Code summarization</a></td>
+            <td><a href="https://drive.google.com/file/d/1m1IvGgPhDBg-SL-LajtFGTLyAJVbD0i3" target="_blank">code-to-text.zip</a></td>
+            <td>scripts/code_to_text</td>
         </tr>
         <tr>
             <td>Text to Code</td>
             <td><a href="https://github.com/microsoft/CodeXGLUE/tree/main/Text-Code/text-to-code" target="_blank">Code generation</a></td>
+            <td><a href="https://drive.google.com/file/d/1rQjQh4Mle3yYzQbn-CRs4L1moZaAqr90" target="_blank">text-to-code.zip</a></td>
+            <td>scripts/text_to_code</td>
         </tr>
         <tr>
             <td rowspan=4>Code-to-Code</td>
             <td><a href="https://github.com/microsoft/CodeXGLUE/tree/main/Code-Code/code-to-code-trans" target="_blank">Code translation</a></td>
+            <td rowspan=4><a href="https://drive.google.com/file/d/15jokCxFQ9BUbptMsrfj4RdH_KiNkTRP2" target="_blank">code-to-code.zip</a></td>
+            <td>scripts/code_to_code/translation</td>
         </tr>
         <tr>
             <td><a href="https://github.com/microsoft/CodeXGLUE/tree/main/Code-Code/code-refinement" target="_blank">Code refinement</a></td>
+            <td>scripts/code_to_code/refinement</td>
         </tr>
         <tr>
             <td><a href="https://github.com/microsoft/CodeXGLUE/tree/main/Code-Code/Clone-detection-BigCloneBench" target="_blank">Clone detection</a></td>
+            <td>scripts/code_to_code/clone_detection</td>
         </tr>
         <tr>
             <td><a href="https://github.com/microsoft/CodeXGLUE/tree/main/Code-Code/Defect-detection" target="_blank">Defect detection</a></td>
+            <td>scripts/code_to_code/defect_prediction</td>
         </tr>
     </tbody>
 </table>
