@@ -3,7 +3,7 @@
 Official code release of our NAACL 2021 work, [Unified Pre-training for Program Understanding and Generation](https://www.aclweb.org/anthology/2021.naacl-main.211/). 
 We present **PLBART** that is pre-trained on a large collection Java and Python functions and natural language descriptions collected from Github and StackOverflow, respectively.
 
-We present the file structure of this repository [here](https://github.com/wasiahmad/PLBART_private/blob/main/FILEs.md).
+We present the file structure of this repository [here](https://github.com/wasiahmad/PLBART/blob/main/FILEs.md).
 
 ### [Pre-training]()
 
