@@ -129,7 +129,6 @@ dmypy.json
 .pyre/
 
 
-data/*
 .idea/
 .idea/*
 *.pyc
