@@ -1,21 +1,22 @@
 ### Little Guide to download Github data from Google Big Query
 
-- Create a Google platform account ( you will have around $300 given for free , that is sufficient for Github)
-- Create a Google Big Query project here
-- In this project, create a dataset
+The following is borrowed from [here](https://github.com/facebookresearch/TransCoder#little-guide-to-download-github-from-google-big-query).
+
+- Create a Google platform account (you will have around $300 given for free, that is sufficient for Github).
+- Create a Google Big Query project [here](https://console.cloud.google.com/projectselector2/bigquery).
+- In this project, create a dataset.
 - In this dataset, create one table per programming language. The results of each SQL request (one per language) will be stored in these tables.
 - Before running your SQL request, make sure you change the query settings to save the query results in the dedicated table (more -> Query Settings -> Destination -> table for query results -> put table name)
 - Run your SQL request (one per language and dont forget to change the table for each request)
 - Export your results to google Cloud :
   - In google cloud storage, create a bucket and a folder per language into it
-  - Export your table to this bucket ( EXPORT -> Export to GCS -> export format JSON , compression GZIP)
+  - Export your table to this bucket (EXPORT -> Export to GCS -> export format JSON , compression GZIP)
 - To download the bucket on your machine, use the API gsutil:
   - pip install gsutil
   - gsutil config -> to config gsutil with your google account
   - gsutil -m cp -r gs://name_of_bucket/name_of_folder . -> copy your bucket on your machine
 
 **NOTE** We set `name_of_folder` to `java` and `python` for respective source files.
-
 
 #### Example of query for python :
 
@@ -33,9 +34,16 @@ WHERE
     AND f.path like '%.py'
 ```
 
-#### Reference
+**[WARNING]** The above documentation may not work as the downloading process from BigQuery has probably changed.
 
-[https://github.com/facebookresearch/TransCoder#little-guide-to-download-github-from-google-big-query](https://github.com/facebookresearch/TransCoder#little-guide-to-download-github-from-google-big-query)
+
+#### Helpful links
+
+- [https://console.cloud.google.com/marketplace/product/github/github-repos](https://console.cloud.google.com/marketplace/product/github/github-repos)
+- [https://cloud.google.com/bigquery/public-data](https://cloud.google.com/bigquery/public-data)
+- [https://cloud.google.com/bigquery/docs/quickstarts/quickstart-web-ui](https://cloud.google.com/bigquery/docs/quickstarts/quickstart-web-ui)
+- [https://hoffa.medium.com/github-on-bigquery-analyze-all-the-code-b3576fd2b150](https://hoffa.medium.com/github-on-bigquery-analyze-all-the-code-b3576fd2b150)
+
 
 ### Preprocessing Github data
     
@@ -71,3 +79,6 @@ valid.functions_standalone.tok
 test.functions_class.tok
 test.functions_standalone.tok
 ```
+
+
+
