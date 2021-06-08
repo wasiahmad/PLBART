@@ -1,19 +1,21 @@
 #!/usr/bin/env bash
 
-BASE_DIR=/local/username/codebart
-SPM_MODEL=${BASE_DIR}/sentencepiece.bpe.model
+CURRENT_DIR=`pwd`
+HOME_DIR=`realpath ../`;
+
+DATA_HOME=${HOME_DIR}/data
+SPM_MODEL=${HOME_DIR}/sentencepice/sentencepiece.bpe.model
 langs=java,python,en_XX
-extra_langs=cpp,cs,ruby,php,go,javascript
 
 DATA_DIR=""
 for (( idx=0; idx<=7; idx++ )); do
-    DATA_DIR+="${BASE_DIR}/shards/shard${idx}"
+    DATA_DIR+="${DATA_HOME}/shards/shard${idx}"
     if [[ $idx < 7 ]]; then
         DATA_DIR+=":"
     fi
 done
 
-SAVE_DIR=${BASE_DIR}/models
+SAVE_DIR=${HOME_DIR}/pretrain
 mkdir -p $SAVE_DIR
 TENSORBOARD_LOGDIR=${SAVE_DIR}/tensorboard_logs
 
@@ -74,4 +76,5 @@ fairseq-train $DATA_DIR \
     --num-workers 4 \
     --seed 1234 \
     --restore-file $SAVE_DIR/checkpoint_last.pt \
-    --tensorboard-logdir $TENSORBOARD_LOGDIR 2>&1 | tee $SAVE_DIR/output.log
+    --tensorboard-logdir $TENSORBOARD_LOGDIR \
+    2>&1 | tee $SAVE_DIR/output.log;

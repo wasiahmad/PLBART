@@ -1,14 +1,22 @@
 #!/usr/bin/env bash
 
-DICT_FILE=/local/username/codebart/dict.txt
-SPM_VOCAB=/local/username/codebart/sentencepiece.bpe.vocab
+export PYTHONIOENCODING=utf-8;
 
-GITHUB_DIR=/local/username/github_data
-SO_DIR=/local/username/stackoverflow/desc_shards
-SHARD_DIR=/local/username/codebart/shards
+CURRENT_DIR=`pwd`
+HOME_DIR=`realpath ../`;
+
+SPM_DIR=${HOME_DIR}/sentencepice
+DICT_FILE=${SPM_DIR}/dict.txt
+SPM_VOCAB=${SPM_DIR}/sentencepiece.bpe.vocab
+SPM_ENC_SCRIPT=${SPM_DIR}/encode.py
+
+DATA_DIR=${HOME_DIR}/data
+GITHUB_DIR=${DATA_DIR}/github
+SO_DIR=${DATA_DIR}/stackoverflow/desc_shards
+
+SHARD_DIR=${DATA_DIR}/shards
 mkdir -p $SHARD_DIR
 
-SPM_ENC_SCRIPT=/home/username/workspace/projects/CodeBART/sentencepiece/encode.py
 
 function spm_preprocess () {
 

@@ -2,106 +2,101 @@
 
 ```
 .
+├── FILEs.md
 ├── LICENSE
 ├── README.md
-├── codeXglue
-│   ├── code_to_code
-│   │   ├── CodeBLEU
-│   │   │   ├── bleu.py
-│   │   │   ├── calc_code_bleu.py
-│   │   │   ├── dataflow_match.py
-│   │   │   ├── keywords
-│   │   │   │   ├── c_sharp.txt
-│   │   │   │   ├── java.txt
-│   │   │   │   └── python.txt
-│   │   │   ├── parser
-│   │   │   │   ├── DFG.py
-│   │   │   │   ├── __init__.py
-│   │   │   │   ├── build.py
-│   │   │   │   ├── build.sh
-│   │   │   │   ├── my-languages.so
-│   │   │   │   └── utils.py
-│   │   │   ├── readme.txt
-│   │   │   ├── syntax_match.py
-│   │   │   ├── utils.py
-│   │   │   └── weighted_ngram_match.py
+├── data
+│   ├── codeXglue
+│   │   └── download.sh
+│   ├── github
+│   │   └── README.md
+│   ├── preprocessing
+│   │   ├── __init__.py
+│   │   ├── detokenize.py
+│   │   ├── preprocess.py
+│   │   ├── src
+│   │   │   ├── __init__.py
+│   │   │   ├── code_tokenizer.py
+│   │   │   ├── dataset.py
+│   │   │   ├── javalang_tokenizer.py
+│   │   │   ├── test_tokenize_cpp.py
+│   │   │   ├── test_tokenize_java.py
+│   │   │   ├── test_tokenize_python.py
+│   │   │   ├── timeout.py
+│   │   │   └── utils.py
+│   │   └── test_preprocess.py
+│   └── stackoverflow
+│       ├── README.md
+│       └── preprocess.py
+├── evaluation
+│   ├── CodeBLEU
 │   │   ├── bleu.py
+│   │   ├── calc_code_bleu.py
+│   │   ├── dataflow_match.py
+│   │   ├── keywords
+│   │   │   ├── c_sharp.txt
+│   │   │   ├── java.txt
+│   │   │   └── python.txt
+│   │   ├── parser
+│   │   │   ├── DFG.py
+│   │   │   ├── __init__.py
+│   │   │   ├── build.py
+│   │   │   ├── build.sh
+│   │   │   ├── my-languages.so
+│   │   │   └── utils.py
+│   │   ├── readme.txt
+│   │   ├── syntax_match.py
+│   │   ├── utils.py
+│   │   └── weighted_ngram_match.py
+│   ├── bleu.py
+│   ├── evaluator.py
+│   └── text_bleu.py
+├── pretrain
+│   ├── absolute.sh
+│   ├── binarize.sh
+│   └── download.sh
+├── requirements.txt
+├── scripts
+│   ├── code_to_code
 │   │   ├── clone_detection
 │   │   │   ├── encode.py
 │   │   │   ├── eval.py
-│   │   │   ├── evaluator.py
 │   │   │   ├── prepare.sh
 │   │   │   └── run.sh
 │   │   ├── defect_prediction
 │   │   │   ├── encode.py
 │   │   │   ├── eval.py
-│   │   │   ├── evaluator.py
 │   │   │   ├── prepare.sh
 │   │   │   └── run.sh
-│   │   ├── encode.py
-│   │   ├── evaluator.py
-│   │   ├── refin_prep.sh
-│   │   ├── refin_run.sh
-│   │   ├── trans_prep.sh
-│   │   └── trans_run.sh
+│   │   ├── refinement
+│   │   │   ├── encode.py
+│   │   │   ├── prepare.sh
+│   │   │   └── run.sh
+│   │   └── translation
+│   │       ├── encode.py
+│   │       ├── prepare.sh
+│   │       └── run.sh
 │   ├── code_to_text
-│   │   ├── download.sh
 │   │   ├── encode.py
-│   │   ├── evaluator.py
-│   │   ├── generate.sh
-│   │   ├── multilingual.sh
-│   │   ├── prep.sh
-│   │   ├── python_tokenizer.py
+│   │   ├── prepare.sh
 │   │   └── run.sh
 │   └── text_to_code
-│       ├── CodeBLEU
-│       │   ├── bleu.py
-│       │   ├── calc_code_bleu.py
-│       │   ├── dataflow_match.py
-│       │   ├── keywords
-│       │   │   ├── c_sharp.txt
-│       │   │   ├── java.txt
-│       │   │   └── python.txt
-│       │   ├── parser
-│       │   │   ├── DFG.py
-│       │   │   ├── __init__.py
-│       │   │   ├── build.py
-│       │   │   ├── build.sh
-│       │   │   ├── my-languages.so
-│       │   │   └── utils.py
-│       │   ├── readme.txt
-│       │   ├── syntax_match.py
-│       │   ├── utils.py
-│       │   └── weighted_ngram_match.py
-│       ├── bleu.py
 │       ├── encode.py
 │       ├── evaluator.py
-│       ├── generate.sh
-│       ├── prep.sh
+│       ├── prepare.sh
 │       └── run.sh
-├── preprocessing
-│   ├── __init__.py
-│   ├── detokenize.py
-│   ├── preprocess.py
-│   ├── src
-│   │   ├── __init__.py
-│   │   ├── code_tokenizer.py
-│   │   ├── dataset.py
-│   │   ├── javalang_tokenizer.py
-│   │   ├── test_tokenize_cpp.py
-│   │   ├── test_tokenize_java.py
-│   │   ├── test_tokenize_python.py
-│   │   ├── timeout.py
-│   │   └── utils.py
-│   └── test_preprocess.py
-├── pretrain
-│   ├── absolute.sh
-│   └── binarize.sh
-├── requirements.txt
 ├── sentencepiece
+│   ├── README.md
+│   ├── dict.txt
 │   ├── encode.py
+│   ├── sentencepiece.bpe.model
+│   ├── sentencepiece.bpe.vocab
 │   └── train.py
 ├── setup.py
-└── stackoverflow
-    └── preprocess.py
+└── source
+    ├── __init__.py
+    ├── sentence_prediction.py
+    └── translation.py
+
+21 directories, 74 files
 ```
