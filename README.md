@@ -35,6 +35,7 @@ We fine-tune and evaluate PLBART on three types of tasks.
         <tr>
             <th>Type</th>
             <th>Task</th>
+            <th>Language(s)</th>
             <th>Data</th>
             <th>Scripts</th>
         </tr>
@@ -43,32 +44,38 @@ We fine-tune and evaluate PLBART on three types of tasks.
         <tr>
             <td>Code to Text</td>
             <td><a href="https://github.com/microsoft/CodeXGLUE/tree/main/Code-Text/code-to-text" target="_blank">Code summarization</a></td>
+            <td>Python, PHP, Go, Java, Javascript, Ruby</td>
             <td><a href="https://drive.google.com/file/d/1m1IvGgPhDBg-SL-LajtFGTLyAJVbD0i3" target="_blank">code-to-text.zip</a></td>
-            <td>scripts/code_to_text</td>
+            <td><a href="https://github.com/wasiahmad/PLBART/tree/main/scripts/code_to_text">[LINK]</a></td>
         </tr>
         <tr>
             <td>Text to Code</td>
             <td><a href="https://github.com/microsoft/CodeXGLUE/tree/main/Text-Code/text-to-code" target="_blank">Code generation</a></td>
+            <td>Java</td>
             <td><a href="https://drive.google.com/file/d/1rQjQh4Mle3yYzQbn-CRs4L1moZaAqr90" target="_blank">text-to-code.zip</a></td>
-            <td>scripts/text_to_code</td>
+            <td><a href="https://github.com/wasiahmad/PLBART/tree/main/scripts/text_to_code">[LINK]</a></td>
         </tr>
         <tr>
             <td rowspan=4>Code-to-Code</td>
             <td><a href="https://github.com/microsoft/CodeXGLUE/tree/main/Code-Code/code-to-code-trans" target="_blank">Code translation</a></td>
+            <td>Java, C#</td>
             <td rowspan=4><a href="https://drive.google.com/file/d/15jokCxFQ9BUbptMsrfj4RdH_KiNkTRP2" target="_blank">code-to-code.zip</a></td>
-            <td>scripts/code_to_code/translation</td>
+            <td><a href="https://github.com/wasiahmad/PLBART/tree/main/scripts/code_to_code/translation">[LINK]</a></td>
         </tr>
         <tr>
             <td><a href="https://github.com/microsoft/CodeXGLUE/tree/main/Code-Code/code-refinement" target="_blank">Code refinement</a></td>
-            <td>scripts/code_to_code/refinement</td>
+            <td>Java</td>
+            <td><a href="https://github.com/wasiahmad/PLBART/tree/main/scripts/code_to_code/refinement">[LINK]</a></td>
         </tr>
         <tr>
             <td><a href="https://github.com/microsoft/CodeXGLUE/tree/main/Code-Code/Clone-detection-BigCloneBench" target="_blank">Clone detection</a></td>
-            <td>scripts/code_to_code/clone_detection</td>
+            <td>Java</td>
+            <td><a href="https://github.com/wasiahmad/PLBART/tree/main/scripts/code_to_code/clone_detection">[LINK]</a></td>
         </tr>
         <tr>
             <td><a href="https://github.com/microsoft/CodeXGLUE/tree/main/Code-Code/Defect-detection" target="_blank">Defect detection</a></td>
-            <td>scripts/code_to_code/defect_prediction</td>
+            <td>C/C++</td>
+            <td><a href="https://github.com/wasiahmad/PLBART/tree/main/scripts/code_to_code/defect_prediction">[LINK]</a></td>
         </tr>
     </tbody>
 </table>
