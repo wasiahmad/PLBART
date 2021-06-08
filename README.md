@@ -44,7 +44,7 @@ We fine-tune and evaluate PLBART on three types of tasks.
         <tr>
             <td>Code to Text</td>
             <td><a href="https://github.com/microsoft/CodeXGLUE/tree/main/Code-Text/code-to-text" target="_blank">Code summarization</a></td>
-            <td>Python, PHP, Go, Java, Javascript, Ruby</td>
+            <td>Python, PHP, Go, Java, <br> Javascript, Ruby</td>
             <td><a href="https://drive.google.com/file/d/1m1IvGgPhDBg-SL-LajtFGTLyAJVbD0i3" target="_blank">code-to-text.zip</a></td>
             <td><a href="https://github.com/wasiahmad/PLBART/tree/main/scripts/code_to_text">[LINK]</a></td>
         </tr>
