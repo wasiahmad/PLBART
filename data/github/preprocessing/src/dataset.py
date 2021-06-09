@@ -9,9 +9,20 @@ import itertools
 import subprocess
 from pathlib import Path
 
-from preprocessing.src.utils import shuf_file, apply_bpe_file, get_vocab_file, learn_bpe_file, regroup_and_select_data, \
-    LocalExecutor, binarize_for_XLM_file, truncate_files, \
-    get_nlines, process_and_tokenize_json_file, extract_functions_file, extract_docstrings
+from data.github.preprocessing.src.utils import (
+    shuf_file,
+    apply_bpe_file,
+    get_vocab_file,
+    learn_bpe_file,
+    regroup_and_select_data,
+    LocalExecutor,
+    binarize_for_XLM_file,
+    truncate_files,
+    get_nlines,
+    process_and_tokenize_json_file,
+    extract_functions_file,
+    extract_docstrings
+)
 
 
 class Language:

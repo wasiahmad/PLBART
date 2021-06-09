@@ -6,12 +6,12 @@
 #
 
 import argparse
-from concurrent.futures import ProcessPoolExecutor
-
-from preprocessing.src.dataset import Dataset
-from preprocessing.src.utils import bool_flag, create_symlink
-from submitit import AutoExecutor
 import subprocess
+
+from concurrent.futures import ProcessPoolExecutor
+from data.github.preprocessing.src.dataset import Dataset
+from data.github.preprocessing.src.utils import bool_flag, create_symlink
+from submitit import AutoExecutor
 from pathlib import Path
 
 

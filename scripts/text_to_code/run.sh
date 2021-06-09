@@ -22,7 +22,7 @@ export CUDA_VISIBLE_DEVICES=$1
 
 SOURCE=en_XX
 TARGET=java
-PATH_2_DATA=${HOME_DIR}/data/codeXglue/text-to-code/concode/data-bin
+PATH_2_DATA=${HOME_DIR}/data/codeXglue/text-to-code/concode
 
 echo "Source: $SOURCE Target: $TARGET"
 
@@ -34,7 +34,7 @@ function fine_tune () {
 
 OUTPUT_FILE=${SAVE_DIR}/finetune.log
 
-fairseq-train $PATH_2_DATA \
+fairseq-train $PATH_2_DATA/data-bin \
     --restore-file $PRETRAIN \
     --bpe 'sentencepiece' \
     --sentencepiece-model $SPM_MODEL \
@@ -88,8 +88,9 @@ function generate () {
 model=${SAVE_DIR}/checkpoint_best.pt
 FILE_PREF=${SAVE_DIR}/output
 RESULT_FILE=${SAVE_DIR}/result.txt
+GOUND_TRUTH_PATH=$PATH_2_DATA/test.json
 
-fairseq-generate $PATH_2_DATA \
+fairseq-generate $PATH_2_DATA/data-bin \
     --path $model \
     --task translation_from_pretrained_bart \
     --gen-subset test \
@@ -101,20 +102,18 @@ fairseq-generate $PATH_2_DATA \
     --beam 10 \
     --lenpen 1.0 > $FILE_PREF
 
-cat $FILE_PREF | grep -P "^H" |sort -V |cut -f 3- | sed 's/\[${TARGET}\]//g' > $FILE_PREF.hyp
-cat $FILE_PREF | grep -P "^T" |sort -V |cut -f 2- | sed 's/\[${TARGET}\]//g' > $FILE_PREF.ref
-sacrebleu -tok 'none' -s 'none' $FILE_PREF.ref < $FILE_PREF.hyp 2>&1 | tee ${RESULT_FILE}
+cat $FILE_PREF | grep -P "^H" |sort -V |cut -f 3- | sed 's/\[${TARGET}\]//g' > $FILE_PREF.hyp;
 
-echo "CodeXGlue Evaluation: \t" >> ${RESULT_FILE}
+echo "CodeXGlue Evaluation" >> ${RESULT_FILE}
 python evaluator.py \
-    --expected ${FILE_PREF}.ref \
+    --expected $GOUND_TRUTH_PATH \
     --predicted ${FILE_PREF}.hyp \
     2>&1 | tee -a ${RESULT_FILE};
 
 echo "CodeBLEU Evaluation" >> ${RESULT_FILE}
 cd ${HOME_DIR}/evaluation/CodeBLEU;
 python calc_code_bleu.py \
-    --refs $FILE_PREF.ref \
+    --refs $GOUND_TRUTH_PATH \
     --hyp $FILE_PREF.hyp \
     --lang $TARGET \
     2>&1 | tee -a ${RESULT_FILE};

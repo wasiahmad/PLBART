@@ -5,6 +5,7 @@ import subprocess
 import sentencepiece as spm
 from pathlib import Path
 from tqdm import tqdm
+from multiprocessing import Pool
 
 
 def count_file_lines(file_path):
@@ -20,23 +21,35 @@ def count_file_lines(file_path):
 
 class MultiprocessingEncoder(object):
 
-    def __init__(self, model_file):
-        self.sp = spm.SentencePieceProcessor(model_file=model_file)
+    def __init__(self, model_file, max_length):
+        self.model_file = model_file
+        self.max_length = max_length
 
     def initializer(self):
-        pass
+        global sp
+        sp = spm.SentencePieceProcessor(model_file=self.model_file)
 
     def _encode(self, line):
-        return self.sp.encode(line, out_type=str)
+        global sp
+        return sp.encode(line, out_type=str)
 
     def _decode(self, tokens):
-        return self.sp.decode(tokens)
+        global sp
+        return sp.decode(tokens)
+
+    def encode(self, example):
+        code_tokens = self._encode(example[0])
+        return {
+            'code': " ".join(code_tokens)[:self.max_length],
+            'label': example[1]
+        }
 
 
-def process(spmfile, srcfile, index_file, outdir, split, nexample=-1, max_length=510):
+def process(
+        spmfile, srcfile, index_file, outdir, split,
+        nexample=-1, max_length=510, workers=20
+):
     index = set()
-    line_count = count_file_lines(index_file)
-    line_count = line_count if nexample == -1 else min(line_count, nexample)
     with open(index_file) as f:
         for idx, line in enumerate(f):
             line = line.strip()
@@ -48,18 +61,24 @@ def process(spmfile, srcfile, index_file, outdir, split, nexample=-1, max_length
         if idx in index:
             data.append((js['func'], js['target']))
 
-    encoder = MultiprocessingEncoder(spmfile)
+    encoder = MultiprocessingEncoder(spmfile, max_length)
+    pool = Pool(workers, initializer=encoder.initializer)
+
+    processed_dataset = []
+    with tqdm(total=len(data), desc='Processing') as pbar:
+        for i, ex in enumerate(pool.imap(encoder.encode, data, 100)):
+            pbar.update()
+            processed_dataset.append(ex)
+
     with open(os.path.join(outdir, '{}.input0'.format(split)), 'w', encoding='utf-8') as fw1, \
             open(os.path.join(outdir, '{}.label'.format(split)), 'w', encoding='utf-8') as fw2:
-        for idx, ex in enumerate(tqdm(data, total=len(data))):
+        for idx, ex in enumerate(processed_dataset):
             if nexample != -1 and idx >= nexample:
                 break
-            code, label = ex[0], ex[1]
-            if label not in [0, 1]:
+            if ex['label'] not in [0, 1]:
                 continue
-            code_tokens = encoder._encode(code)[:max_length]
-            fw1.write(' '.join(code_tokens) + '\n')
-            fw2.write(str(label) + '\n')
+            fw1.write(ex['code'] + '\n')
+            fw2.write(str(ex['label']) + '\n')
 
 
 def main():
@@ -105,12 +124,14 @@ def main():
         default='-',
         help="path of the index file",
     )
+    parser.add_argument("--workers", type=int, default=60)
     args = parser.parse_args()
 
     Path(args.output_dir).mkdir(parents=True, exist_ok=True)
     process(
         args.model_file, args.src_file, args.index_file,
-        args.output_dir, args.split, args.nexample, args.max_length
+        args.output_dir, args.split, args.nexample,
+        args.max_length, args.workers
     )
 
 

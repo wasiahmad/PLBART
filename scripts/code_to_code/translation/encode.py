@@ -18,28 +18,29 @@ import sentencepiece as spm
 class MultiprocessingEncoder(object):
 
     def __init__(self, args):
-        self.keep_empty = args.keep_empty
-        self.max_len = args.max_len
-        self.sp = spm.SentencePieceProcessor(model_file=args.model_file)
+        self.args = args
 
     def initializer(self):
-        pass
+        global sp
+        sp = spm.SentencePieceProcessor(model_file=self.args.model_file)
 
     def _encode(self, line):
-        return self.sp.encode(line, out_type=str)
+        global sp
+        return sp.encode(line, out_type=str)
 
     def _decode(self, tokens):
-        return self.sp.decode(tokens)
+        global sp
+        return sp.decode(tokens)
 
     def encode(self, example):
         assert isinstance(example, dict)
         assert 'src' in example and 'tgt' in example
-        if len(example['src']) == 0 and not self.keep_empty:
+        if len(example['src']) == 0 and not self.args.keep_empty:
             return None
-        if len(example['tgt']) == 0 and not self.keep_empty:
+        if len(example['tgt']) == 0 and not self.args.keep_empty:
             return None
-        src_tokens = self._encode(example['src'])[:self.max_len]
-        tgt_tokens = self._encode(example['tgt'])[:self.max_len]
+        src_tokens = self._encode(example['src'])[:self.args.max_len]
+        tgt_tokens = self._encode(example['tgt'])[:self.args.max_len]
         return {'src': " ".join(src_tokens), 'tgt': " ".join(tgt_tokens)}
 
 

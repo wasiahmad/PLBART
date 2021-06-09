@@ -5,6 +5,7 @@ import subprocess
 import sentencepiece as spm
 from pathlib import Path
 from tqdm import tqdm
+from multiprocessing import Pool
 
 
 def count_file_lines(file_path):
@@ -21,48 +22,45 @@ def count_file_lines(file_path):
 class MultiprocessingEncoder(object):
 
     def __init__(self, model_file):
-        self.sp = spm.SentencePieceProcessor(model_file=model_file)
+        self.model_file = model_file
 
     def initializer(self):
-        pass
+        global sp
+        sp = spm.SentencePieceProcessor(model_file=self.model_file)
 
     def _encode(self, line):
-        return self.sp.encode(line, out_type=str)
+        global sp
+        return sp.encode(line, out_type=str)
 
     def _decode(self, tokens):
-        return self.sp.decode(tokens)
+        global sp
+        return sp.decode(tokens)
+
+    def encode(self, example):
+        assert isinstance(example, dict)
+        code_tokens = self._encode(example['func'])
+        return {'idx': example['idx'], 'code': " ".join(code_tokens)}
 
 
-def preprocess(spmfile, srcfile, tgtfile):
-    encoder = MultiprocessingEncoder(spmfile)
-    dataset = {}
-    fn_lengths = []
+def preprocess(spmfile, srcfile, tgtfile, workers=20):
+    dataset = []
     with open(srcfile, encoding='utf8') as f:
-        for line in tqdm(f, total=count_file_lines(srcfile)):
+        for line in f:
             ex = json.loads(line)
-            code = encoder._encode(ex['func'])
-            dataset[ex['idx']] = " ".join(code)
-            fn_lengths.append(len(code))
+            dataset.append(ex)
 
-    print('Max/Avg. function length  - {} / {}'.format(max(fn_lengths), 1.0 * sum(fn_lengths) / len(fn_lengths)))
+    encoder = MultiprocessingEncoder(spmfile)
+    pool = Pool(workers, initializer=encoder.initializer)
+
+    processed_dataset = {}
+    with tqdm(total=len(dataset), desc='Processing') as pbar:
+        for i, ex in enumerate(pool.imap(encoder.encode, dataset, 100)):
+            pbar.update()
+            processed_dataset[ex['idx']] = ex['code']
+
     with open(tgtfile, 'w', encoding='utf8') as fw:
-        for item in sorted(dataset.items()):
+        for item in sorted(processed_dataset.items()):
             fw.write(item[0] + '\t' + item[1] + '\n')
-
-
-def calculate_scores(answers, predictions):
-    y_trues, y_preds = [], []
-    for key in answers:
-        if key not in predictions:
-            logging.error("Missing prediction for ({},{}) pair.".format(key[0], key[1]))
-            sys.exit()
-        y_trues.append(answers[key])
-        y_preds.append(predictions[key])
-    scores = {}
-    scores['Recall'] = recall_score(y_trues, y_preds, average='macro')
-    scores['Prediction'] = precision_score(y_trues, y_preds, average='macro')
-    scores['F1'] = f1_score(y_trues, y_preds, average='macro')
-    return scores
 
 
 def postprocess(srcfile, index_file, outdir, split, nexample=-1, max_length=510):
@@ -153,10 +151,11 @@ def main():
         default='-',
         help="path of the index file",
     )
+    parser.add_argument("--workers", type=int, default=60)
     args = parser.parse_args()
     assert not (args.preprocess and args.postprocess)
     if args.preprocess:
-        preprocess(args.model_file, args.src_file, args.tgt_file)
+        preprocess(args.model_file, args.src_file, args.tgt_file, args.workers)
     if args.postprocess:
         Path(args.output_dir).mkdir(parents=True, exist_ok=True)
         postprocess(

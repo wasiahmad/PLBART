@@ -11,9 +11,9 @@ function preprocess () {
 python encode.py \
     --preprocess \
     --model_file ${SPM_DIR}/sentencepiece.bpe.model \
-    --output_dir $DATA_DIR \
     --src_file $DATA_DIR/data.jsonl \
-    --tgt_file $DATA_DIR/data-processed.txt;
+    --tgt_file $DATA_DIR/data-processed.txt \
+    --workers 60;
 
 }
 

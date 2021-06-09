@@ -4,7 +4,7 @@ CURRENT_DIR=`pwd`
 HOME_DIR=`realpath ../..`;
 
 DATA_DIR=${HOME_DIR}/data/codeXglue/code-to-text
-SPM_DIR=${HOME_DIR}/sentencepice
+SPM_DIR=${HOME_DIR}/sentencepiece
 
 
 function spm_preprocess () {
@@ -18,7 +18,7 @@ for SPLIT in train valid test; do
             MAX_TGT_LEN=128
         fi
         if [[ $LANG == 'python' ]]; then
-            SRC_FIELD='code' # we do not truncate test sequences
+            SRC_FIELD='code'
         else
             SRC_FIELD='code_tokens'
         fi

@@ -26,10 +26,9 @@ def main():
         p = pres[i]
         if r == p:
             count += 1
+
     acc = round(count / length * 100, 2)
-
     bleu_score = round(_bleu(args.references, args.predictions), 2)
-
     print('BLEU:', bleu_score, '; Acc:', acc)
 
 

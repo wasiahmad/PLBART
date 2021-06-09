@@ -6,10 +6,9 @@
 #
 
 import re
+import six
 import unicodedata
 from collections import namedtuple
-
-import six
 
 
 class LexerError(Exception):

@@ -28,7 +28,7 @@ export CUDA_VISIBLE_DEVICES=$1
 SOURCE=$2
 TARGET=$3
 
-PATH_2_DATA=${HOME_DIR}/data/codeXglue/code-to-code/translation/data-bin
+PATH_2_DATA=${HOME_DIR}/data/codeXglue/code-to-code/translation
 
 echo "Source: $SOURCE Target: $TARGET"
 
@@ -46,7 +46,7 @@ OUTPUT_FILE=${SAVE_DIR}/finetune.log
 # setting the batch size to 8 with update-freq to 2
 # performing validation at every 500 steps, saving the last 10 checkpoints
 
-fairseq-train $PATH_2_DATA \
+fairseq-train $PATH_2_DATA/data-bin \
     --user-dir $USER_DIR \
     --langs $langs \
     --task translation_without_lang_token \
@@ -100,8 +100,9 @@ function generate () {
 model=${SAVE_DIR}/checkpoint_best.pt
 FILE_PREF=${SAVE_DIR}/output
 RESULT_FILE=${SAVE_DIR}/result.txt
+GOUND_TRUTH_PATH=$PATH_2_DATA/test.java-cs.txt.${TARGET}
 
-fairseq-generate $PATH_2_DATA \
+fairseq-generate $PATH_2_DATA/data-bin \
     --user-dir $USER_DIR \
     --path $model \
     --truncate-source \
@@ -116,19 +117,17 @@ fairseq-generate $PATH_2_DATA \
     --langs $langs > $FILE_PREF
 
 cat $FILE_PREF | grep -P "^H" |sort -V |cut -f 3- | sed 's/\[${TARGET}\]//g' > $FILE_PREF.hyp
-cat $FILE_PREF | grep -P "^T" |sort -V |cut -f 2- | sed 's/\[${TARGET}\]//g' > $FILE_PREF.ref
-sacrebleu -tok 'none' -s 'none' $FILE_PREF.ref < $FILE_PREF.hyp 2>&1 | tee ${RESULT_FILE}
 
-echo "CodeXGlue Evaluation: \t" >> ${RESULT_FILE}
+echo "CodeXGlue Evaluation" >> ${RESULT_FILE}
 python ${HOME_DIR}/evaluation/evaluator.py \
-    --ref ${FILE_PREF}.ref \
-    --pre ${FILE_PREF}.hyp \
+    --ref $GOUND_TRUTH_PATH \
+    --pre $FILE_PREF.hyp \
     2>&1 | tee -a ${RESULT_FILE};
 
 echo "CodeBLEU Evaluation" >> ${RESULT_FILE}
 cd ${HOME_DIR}/evaluation/CodeBLEU;
 python calc_code_bleu.py \
-    --refs $FILE_PREF.ref \
+    --refs $GOUND_TRUTH_PATH \
     --hyp $FILE_PREF.hyp \
     --lang ${LANG_MAP[$TARGET]} \
     2>&1 | tee -a ${RESULT_FILE};

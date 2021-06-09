@@ -24,7 +24,7 @@ export CUDA_VISIBLE_DEVICES=$1
 
 SOURCE=$2
 TARGET=en_XX
-PATH_2_DATA=${HOME_DIR}/data/codeXglue/code-to-text/${SOURCE}/data-bin
+PATH_2_DATA=${HOME_DIR}/data/codeXglue/code-to-text/${SOURCE}
 
 echo "Source: $SOURCE Target: $TARGET"
 
@@ -43,8 +43,8 @@ fi
 function fine_tune () {
 
 OUTPUT_FILE=${SAVE_DIR}/finetune.log
-fairseq-train $PATH_2_DATA \
-    $USER_DIR \
+fairseq-train $PATH_2_DATA/data-bin \
+    --user-dir $USER_DIR \
     --restore-file $PRETRAIN \
     --bpe 'sentencepiece' \
     --sentencepiece-model $SPM_MODEL \
@@ -99,8 +99,10 @@ function generate () {
 model=${SAVE_DIR}/checkpoint_best.pt
 FILE_PREF=${SAVE_DIR}/output
 RESULT_FILE=${SAVE_DIR}/result.txt
+GOUND_TRUTH_PATH=$PATH_2_DATA/test.jsonl
 
-fairseq-generate $PATH_2_DATA $USER_DIR \
+fairseq-generate $PATH_2_DATA/data-bin \
+    --user-dir $USER_DIR \
     --path $model \
     --task $TASK \
     --gen-subset test \
@@ -111,11 +113,8 @@ fairseq-generate $PATH_2_DATA $USER_DIR \
     --langs $langs \
     --beam 10 > $FILE_PREF
 
-cat $FILE_PREF | grep -P "^H" |sort -V |cut -f 3- | sed 's/\[${TARGET}\]//g' > $FILE_PREF.hyp
-cat $FILE_PREF | grep -P "^T" |sort -V |cut -f 2- | sed 's/\[${TARGET}\]//g' > $FILE_PREF.ref
-sacrebleu -tok 'none' -s 'none' $FILE_PREF.ref < $FILE_PREF.hyp 2>&1 | tee ${RESULT_FILE};
-echo "CodeXGlue Evaluation: \t" >> ${RESULT_FILE}
-python ${HOME_DIR}/evaluation/text_bleu.py $FILE_PREF.ref $FILE_PREF.hyp 2>&1 | tee -a ${RESULT_FILE};
+cat $FILE_PREF | grep -P "^H" |sort -V |cut -f 3- | sed 's/\[${TARGET}\]//g' > $FILE_PREF.hyp;
+python evaluator.py $GOUND_TRUTH_PATH $FILE_PREF.hyp 2>&1 | tee ${RESULT_FILE};
 
 }
 

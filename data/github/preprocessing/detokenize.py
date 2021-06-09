@@ -11,7 +11,7 @@ from multiprocessing import Pool
 from multiprocessing import cpu_count
 from pathlib import Path
 
-import preprocessing.src.code_tokenizer as code_tokenizer
+import data.github.preprocessing.src.code_tokenizer as code_tokenizer
 
 
 def detokenize(input_path, language):

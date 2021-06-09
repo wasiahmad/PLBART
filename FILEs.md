@@ -9,22 +9,18 @@
 │   ├── codeXglue
 │   │   └── download.sh
 │   ├── github
-│   │   └── README.md
-│   ├── preprocessing
-│   │   ├── __init__.py
-│   │   ├── detokenize.py
-│   │   ├── preprocess.py
-│   │   ├── src
-│   │   │   ├── __init__.py
-│   │   │   ├── code_tokenizer.py
-│   │   │   ├── dataset.py
-│   │   │   ├── javalang_tokenizer.py
-│   │   │   ├── test_tokenize_cpp.py
-│   │   │   ├── test_tokenize_java.py
-│   │   │   ├── test_tokenize_python.py
-│   │   │   ├── timeout.py
-│   │   │   └── utils.py
-│   │   └── test_preprocess.py
+│   │   ├── README.md
+│   │   └── preprocessing
+│   │       ├── __init__.py
+│   │       ├── detokenize.py
+│   │       ├── preprocess.py
+│   │       └── src
+│   │           ├── __init__.py
+│   │           ├── code_tokenizer.py
+│   │           ├── dataset.py
+│   │           ├── javalang_tokenizer.py
+│   │           ├── timeout.py
+│   │           └── utils.py
 │   └── stackoverflow
 │       ├── README.md
 │       └── preprocess.py
@@ -49,8 +45,7 @@
 │   │   ├── utils.py
 │   │   └── weighted_ngram_match.py
 │   ├── bleu.py
-│   ├── evaluator.py
-│   └── text_bleu.py
+│   └── evaluator.py
 ├── pretrain
 │   ├── absolute.sh
 │   ├── binarize.sh
@@ -78,6 +73,7 @@
 │   │       └── run.sh
 │   ├── code_to_text
 │   │   ├── encode.py
+│   │   ├── evaluator.py
 │   │   ├── prepare.sh
 │   │   └── run.sh
 │   └── text_to_code
@@ -98,5 +94,5 @@
     ├── sentence_prediction.py
     └── translation.py
 
-21 directories, 74 files
+21 directories, 70 files
 ```

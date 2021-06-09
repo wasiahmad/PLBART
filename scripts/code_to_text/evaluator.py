@@ -14,9 +14,12 @@ score_set(s, testid, refids, n=4): Interface with dataset.py; calculate BLEU sco
 The reason for breaking the BLEU computation into three phases cook_refs(), cook_test(), and score_cooked() is to allow the caller to calculate BLEU scores for multiple test sets as efficiently as possible.
 '''
 
-import sys, math, re, xml.sax.saxutils
+import json
 import subprocess
-import os
+import sys
+import math
+import re
+import xml.sax.saxutils
 
 # Added to bypass NIST-style pre-processing of hyp and ref files -- wade
 nonorm = 0
@@ -168,11 +171,12 @@ def computeMaps(prediction_file, goldfile):
         predictionMap[rid] = [splitPuncts(pred.strip().lower())]
 
     for rid, row in enumerate(gf):
-        # (rid, pred) = row.split('\t')
         if rid in predictionMap:  # Only insert if the id exists for the method
             if rid not in goldMap:
                 goldMap[rid] = []
-            goldMap[rid].append(splitPuncts(row.strip().lower()))
+            # goldMap[rid].append(splitPuncts(row.strip().lower()))
+            row = ' '.join(json.loads(row.strip())['docstring_tokens'])
+            goldMap[rid].append(splitPuncts(row.lower()))
 
     predictions.close()
     gf.close()

@@ -1,6 +1,5 @@
 # Copyright (c) Microsoft Corporation. 
 # Licensed under the MIT license.
-import os
 import logging
 import argparse
 from bleu import _bleu
@@ -26,7 +25,7 @@ def main():
     EM = 0.0
     for pred, gt in zip(preds, gts):
         pred = pred.strip()
-        gt = gt.strip()
+        gt = json.loads(gt.strip())['code']
         pred = ' '.join([tok.strip() for tok in pred.split()])
         gt = ' '.join([tok.strip() for tok in gt.split()])
         if pred == gt:

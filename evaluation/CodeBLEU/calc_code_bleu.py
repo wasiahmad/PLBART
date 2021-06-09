@@ -4,6 +4,7 @@
 # -*- coding:utf-8 -*-
 import argparse
 import bleu
+import json
 import weighted_ngram_match
 import syntax_match
 import dataflow_match
@@ -36,7 +37,14 @@ references = []
 for i in range(len(hypothesis)):
     ref_for_instance = []
     for j in range(len(pre_references)):
-        ref_for_instance.append(pre_references[j][i])
+        if isinstance(pre_references[j][i], str):
+            ref_for_instance.append(pre_references[j][i])
+        else:
+            _ref = json.loads(pre_references[j][i])
+            if 'code' in _ref:
+                ref_for_instance.append(_ref['code'])
+            else:
+                raise ValueError('Unknown key to extract code')
     references.append(ref_for_instance)
 assert len(references) == len(pre_references) * len(hypothesis)
 

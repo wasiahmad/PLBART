@@ -1,8 +1,10 @@
 ### Little Guide to download Github data from Google Big Query
 
-The following is borrowed from [here](https://github.com/facebookresearch/TransCoder#little-guide-to-download-github-from-google-big-query).
+The following guide is borrowed from [here](https://github.com/facebookresearch/TransCoder#little-guide-to-download-github-from-google-big-query). 
+We followed this guide to download the Github data.
+However, the guide may not work as the downloading process from BigQuery has probably changed.
 
-- Create a Google platform account (you will have around $300 given for free, that is sufficient for Github).
+- Create a Google platform account (you will be given $300 free credit that is sufficient to download the Github data).
 - Create a Google Big Query project [here](https://console.cloud.google.com/projectselector2/bigquery).
 - In this project, create a dataset.
 - In this dataset, create one table per programming language. The results of each SQL request (one per language) will be stored in these tables.
@@ -12,9 +14,9 @@ The following is borrowed from [here](https://github.com/facebookresearch/TransC
   - In google cloud storage, create a bucket and a folder per language into it
   - Export your table to this bucket (EXPORT -> Export to GCS -> export format JSON , compression GZIP)
 - To download the bucket on your machine, use the API gsutil:
-  - pip install gsutil
-  - gsutil config -> to config gsutil with your google account
-  - gsutil -m cp -r gs://name_of_bucket/name_of_folder . -> copy your bucket on your machine
+  - `pip install gsutil`
+  - `gsutil config -> to config gsutil with your google account`
+  - copy your bucket on your machine -> `gsutil -m cp -r gs://name_of_bucket/name_of_folder .`
 
 **NOTE** We set `name_of_folder` to `java` and `python` for respective source files.
 
@@ -34,8 +36,6 @@ WHERE
     AND f.path like '%.py'
 ```
 
-**[WARNING]** The above documentation may not work as the downloading process from BigQuery has probably changed.
-
 
 #### Helpful links
 
@@ -46,16 +46,24 @@ WHERE
 
 
 ### Preprocessing Github data
+
+#### Dependencies
+
+- [submitit](https://pypi.org/project/submitit/) (to run the preprocessing pipeline on remote machine)
+- [libclang](https://pypi.org/project/clang/) (for C++ tokenization)
+- [sacrebleu](https://pypi.org/project/sacrebleu/) (`pip install sacrebleu=="1.2.11"`)
+
+#### Preprocess
     
 ```
-python ../preprocessing/preprocess.py \
-    --root . \
+python -m preprocessing.preprocess \
+    path_2_github_data \
     --lang1 java \
     --lang2 python \
     --test_size 10000;
 ```
 
-After preprocessing, in each directory (java/ and python/), the following files should be created.
+After preprocessing, in each directory (`java/` and `python/`), the following files should be created.
 
 ```
 train.0.functions_class.tok

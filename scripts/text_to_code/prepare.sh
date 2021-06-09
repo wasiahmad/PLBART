@@ -4,7 +4,7 @@ CURRENT_DIR=`pwd`
 HOME_DIR=`realpath ../..`;
 
 DATA_DIR=${HOME_DIR}/data/codeXglue/text-to-code
-SPM_DIR=${HOME_DIR}/sentencepice
+SPM_DIR=${HOME_DIR}/sentencepiece
 
 
 function spm_preprocess () {

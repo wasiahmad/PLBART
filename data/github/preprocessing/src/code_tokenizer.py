@@ -11,13 +11,13 @@ import os
 import random
 import re
 import sys
-import tokenize
-from io import BytesIO
-
 import clang
-import preprocessing.src.javalang_tokenizer as javalang_tok
+import tokenize
+import data.github.preprocessing.src.javalang_tokenizer as javalang_tok
+
+from io import BytesIO
 from clang.cindex import TokenKind
-from preprocessing.src.timeout import timeout, TimeoutError
+from data.github.preprocessing.src.timeout import timeout, TimeoutError
 from sacrebleu import tokenize_v14_international
 
 TOK_NO_SPACE_BEFORE = {',', ';'}
@@ -35,37 +35,41 @@ logging.basicConfig(
 
 idx = clang.cindex.Index.create()
 
-JAVA_TOKEN2CHAR = {'STOKEN0': "//",
-                   'STOKEN1': "/*",
-                   'STOKEN2': "*/",
-                   'STOKEN3': "/**",
-                   'STOKEN4': "**/",
-                   'STOKEN5': '"""',
-                   'STOKEN6': '\\n'
-                   }
-JAVA_CHAR2TOKEN = {"//": ' STOKEN0 ',
-                   "/*": ' STOKEN1 ',
-                   "*/": ' STOKEN2 ',
-                   "/**": ' STOKEN3 ',
-                   "**/": ' STOKEN4 ',
-                   '"""': ' STOKEN5 ',
-                   '\\n': ' STOKEN6 '
-                   }
+JAVA_TOKEN2CHAR = {
+    'STOKEN0': "//",
+    'STOKEN1': "/*",
+    'STOKEN2': "*/",
+    'STOKEN3': "/**",
+    'STOKEN4': "**/",
+    'STOKEN5': '"""',
+    'STOKEN6': '\\n'
+}
+JAVA_CHAR2TOKEN = {
+    "//": ' STOKEN0 ',
+    "/*": ' STOKEN1 ',
+    "*/": ' STOKEN2 ',
+    "/**": ' STOKEN3 ',
+    "**/": ' STOKEN4 ',
+    '"""': ' STOKEN5 ',
+    '\\n': ' STOKEN6 '
+}
 
 CPP_TOKEN2CHAR = JAVA_TOKEN2CHAR.copy()
 CPP_CHAR2TOKEN = JAVA_CHAR2TOKEN.copy()
 
-PYTHON_TOKEN2CHAR = {'STOKEN0': '#',
-                     'STOKEN1': "\\n",
-                     'STOKEN2': '"""',
-                     'STOKEN3': "'''"
-                     }
+PYTHON_TOKEN2CHAR = {
+    'STOKEN0': '#',
+    'STOKEN1': "\\n",
+    'STOKEN2': '"""',
+    'STOKEN3': "'''"
+}
 
-PYTHON_CHAR2TOKEN = {'#': ' STOKEN0 ',
-                     "\\n": ' STOKEN1 ',
-                     '"""': ' STOKEN2 ',
-                     "'''": ' STOKEN3 '
-                     }
+PYTHON_CHAR2TOKEN = {
+    '#': ' STOKEN0 ',
+    "\\n": ' STOKEN1 ',
+    '"""': ' STOKEN2 ',
+    "'''": ' STOKEN3 '
+}
 
 
 class ind_iter(object):
