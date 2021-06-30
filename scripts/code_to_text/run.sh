@@ -43,8 +43,7 @@ fi
 function fine_tune () {
 
 OUTPUT_FILE=${SAVE_DIR}/finetune.log
-fairseq-train $PATH_2_DATA/data-bin \
-    --user-dir $USER_DIR \
+fairseq-train $PATH_2_DATA/data-bin $USER_DIR \
     --restore-file $PRETRAIN \
     --bpe 'sentencepiece' \
     --sentencepiece-model $SPM_MODEL \
