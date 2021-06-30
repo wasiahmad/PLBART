@@ -2,7 +2,7 @@
 # Licensed under the MIT license.
 import logging
 import argparse
-from bleu import _bleu
+from evaluation.bleu import _bleu
 import json
 
 logger = logging.getLogger(__name__)
