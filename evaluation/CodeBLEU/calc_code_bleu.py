@@ -10,10 +10,9 @@ import syntax_match
 import dataflow_match
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--refs', type=str, nargs='+', required=True,
-                    help='reference files')
-parser.add_argument('--hyp', type=str, required=True,
-                    help='hypothesis file')
+parser.add_argument('--refs', type=str, nargs='+', required=True, help='reference files')
+parser.add_argument('--json_refs', action='store_true', help='reference files are JSON files')
+parser.add_argument('--hyp', type=str, required=True, help='hypothesis file')
 parser.add_argument('--lang', type=str, required=True,
                     choices=['java', 'js', 'c_sharp', 'php', 'go', 'python', 'ruby'],
                     help='programming language')
@@ -37,15 +36,13 @@ references = []
 for i in range(len(hypothesis)):
     ref_for_instance = []
     for j in range(len(pre_references)):
-        if isinstance(pre_references[j][i], str):
-            ref_for_instance.append(pre_references[j][i])
-        else:
+        if args.json_refs:
             _ref = json.loads(pre_references[j][i])
-            if 'code' in _ref:
-                ref_for_instance.append(_ref['code'])
-            else:
-                raise ValueError('Unknown key to extract code')
+            ref_for_instance.append(_ref['code'])
+        else:
+            ref_for_instance.append(pre_references[j][i])
     references.append(ref_for_instance)
+
 assert len(references) == len(pre_references) * len(hypothesis)
 
 # calculate ngram match (BLEU)

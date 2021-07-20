@@ -60,8 +60,7 @@ def compute_bleu(reference_corpus, translation_corpus, max_order=4,
     possible_matches_by_order = [0] * max_order
     reference_length = 0
     translation_length = 0
-    for (references, translation) in zip(reference_corpus,
-                                         translation_corpus):
+    for (references, translation) in zip(reference_corpus, translation_corpus):
         reference_length += min(len(r) for r in references)
         translation_length += len(translation)
 

@@ -22,7 +22,7 @@ export CUDA_VISIBLE_DEVICES=$1
 
 PATH_2_DATA=${HOME_DIR}/data/codeXglue/code-to-code/clone_detection/processed
 
-SAVE_DIR=${CURRENT_DIR}/clone_detection
+SAVE_DIR=${CURRENT_DIR}/big_clone_bench
 mkdir -p ${SAVE_DIR}
 USER_DIR=${HOME_DIR}/source
 

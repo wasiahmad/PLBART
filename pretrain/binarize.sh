@@ -5,7 +5,7 @@ export PYTHONIOENCODING=utf-8;
 CURRENT_DIR=`pwd`
 HOME_DIR=`realpath ../`;
 
-SPM_DIR=${HOME_DIR}/sentencepice
+SPM_DIR=${HOME_DIR}/sentencepiece
 DICT_FILE=${SPM_DIR}/dict.txt
 SPM_VOCAB=${SPM_DIR}/sentencepiece.bpe.vocab
 SPM_ENC_SCRIPT=${SPM_DIR}/encode.py
@@ -25,7 +25,7 @@ for LANG in java python; do
         for j in functions_class functions_standalone; do
             echo "$GITHUB_DIR/$LANG/train.$i.$j.tok"
             python $SPM_ENC_SCRIPT \
-                --model-file cbart/sentencepiece.bpe.model \
+                --model-file $SPM_DIR/sentencepiece.bpe.model \
                 --inputs "$GITHUB_DIR/$LANG/train.$i.$j.tok" \
                 --outputs "$GITHUB_DIR/$LANG/train.$i.$j.spm" \
                 --max_len 510 \

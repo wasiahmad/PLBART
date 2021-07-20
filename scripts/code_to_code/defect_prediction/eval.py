@@ -37,7 +37,7 @@ if __name__ == '__main__':
         checkpoint_file=args.model_name,
         data_name_or_path=args.data_bin_path,
         user_dir=args.user_dir,
-        task="bart_sentence_prediction",
+        task="plbart_sentence_prediction",
     )
 
     label_fn = lambda label: bart.task.label_dictionary.string(
@@ -82,7 +82,7 @@ if __name__ == '__main__':
                 ncorrect += sum([int(p == t) for p, t in zip(prediction, batch_targets)])
                 nsamples += len(prediction)
                 log = ['{}\t{}'.format(p, t) for p, t in zip(prediction, batch_targets)]
-                outp.write('\n'.join(log) + '\n')
+                # outp.write('\n'.join(log) + '\n')
 
         assert len(inputs) == nsamples
         acc = round(100.0 * ncorrect / nsamples, 3)

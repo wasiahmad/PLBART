@@ -4,7 +4,7 @@ CURRENT_DIR=`pwd`
 HOME_DIR=`realpath ../`;
 
 DATA_HOME=${HOME_DIR}/data
-SPM_MODEL=${HOME_DIR}/sentencepice/sentencepiece.bpe.model
+SPM_MODEL=${HOME_DIR}/sentencepiece/sentencepiece.bpe.model
 langs=java,python,en_XX
 
 DATA_DIR=""

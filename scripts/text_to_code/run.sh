@@ -107,14 +107,15 @@ cat $FILE_PREF | grep -P "^H" |sort -V |cut -f 3- | sed 's/\[${TARGET}\]//g' > $
 echo "CodeXGlue Evaluation" >> ${RESULT_FILE}
 python evaluator.py \
     --expected $GOUND_TRUTH_PATH \
-    --predicted ${FILE_PREF}.hyp \
+    --predicted $FILE_PREF.hyp \
     2>&1 | tee -a ${RESULT_FILE};
 
 echo "CodeBLEU Evaluation" >> ${RESULT_FILE}
 cd ${HOME_DIR}/evaluation/CodeBLEU;
 python calc_code_bleu.py \
-    --refs $GOUND_TRUTH_PATH \
     --hyp $FILE_PREF.hyp \
+    --refs $GOUND_TRUTH_PATH \
+    --json_refs \
     --lang $TARGET \
     2>&1 | tee -a ${RESULT_FILE};
 cd ${CURRENT_DIR};

@@ -100,15 +100,14 @@ FILE_PREF=${SAVE_DIR}/output
 RESULT_FILE=${SAVE_DIR}/result.txt
 GOUND_TRUTH_PATH=$PATH_2_DATA/test.jsonl
 
-fairseq-generate $PATH_2_DATA/data-bin \
-    --user-dir $USER_DIR \
+fairseq-generate $PATH_2_DATA/data-bin $USER_DIR \
     --path $model \
     --task $TASK \
     --gen-subset test \
     -t $TARGET -s $SOURCE \
     --sacrebleu \
     --remove-bpe 'sentencepiece' \
-    --batch-size 4 \
+    --batch-size 8 \
     --langs $langs \
     --beam 10 > $FILE_PREF
 
@@ -116,7 +115,6 @@ cat $FILE_PREF | grep -P "^H" |sort -V |cut -f 3- | sed 's/\[${TARGET}\]//g' > $
 python evaluator.py $GOUND_TRUTH_PATH $FILE_PREF.hyp 2>&1 | tee ${RESULT_FILE};
 
 }
-
 
 fine_tune
 generate
