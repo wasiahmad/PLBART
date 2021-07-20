@@ -60,64 +60,44 @@ We fine-tune and evaluate PLBART on three types of tasks.
         <tr>
             <td>Code to Text</td>
             <td><a href="https://github.com/microsoft/CodeXGLUE/tree/main/Code-Text/code-to-text" target="_blank">Code summarization</a></td>
-            <td>Python <br> Java <br> Ruby <br> PHP <br> Javascript <br> Go</td>
-            <td><a href="https://drive.google.com/file/d/1m1IvGgPhDBg-SL-LajtFGTLyAJVbD0i3" target="_blank">code-to-text.zip</a></td>
+            <td>Python, Java, Ruby <br> PHP, Javascript, Go</td>
+            <td><a href="https://drive.google.com/file/d/1m1IvGgPhDBg-SL-LajtFGTLyAJVbD0i3" target="_blank">[LINK]</a></td>
             <td><a href="https://github.com/wasiahmad/PLBART/tree/main/scripts/code_to_text">[LINK]</a></td>
-            <td>
-                <a href="https://drive.google.com/drive/folders/1ijkcsxINtxvKz_DDe7TYCUq15meizLcR" target="_blank">[python_en_XX]</a>
-                <br>
-                <a href="https://drive.google.com/drive/folders/1MNkQPGLdnhcP_MnouTLrlm1IyN65OAED" target="_blank">[java_en_XX]</a>
-                <br>
-                <a href="https://drive.google.com/drive/folders/18ix4BE6z8S_qa2uk6c2jnB7EheVvdP6Q" target="_blank">[ruby_en_XX]</a>
-                <br>
-                <a href="https://drive.google.com/drive/folders/1RbNXh0RCOejuH64nPAz3Y6H37JtrchcQ" target="_blank">[php_en_XX]</a>
-                <br>
-                <a href="https://drive.google.com/drive/folders/1-nu3395dxnUliOGQ44QT2KbE6YWoDXJj" target="_blank">[javascript_en_XX]</a>
-                <br>
-                <a href="https://drive.google.com/drive/folders/1ZImgzyaLbRJxVFw_AdSuVz_Eqn54N_ee" target="_blank">[go_en_XX]</a>
-            </td>
+            <td><a href="https://drive.google.com/drive/folders/1z_xC4-k8liAT1ir6r75sGza5BIXhzwUU" target="_blank">[LINK]</a></td>
         </tr>
         <tr>
             <td>Text to Code</td>
             <td><a href="https://github.com/microsoft/CodeXGLUE/tree/main/Text-Code/text-to-code" target="_blank">Code generation</a></td>
             <td>Java</td>
-            <td><a href="https://drive.google.com/file/d/1rQjQh4Mle3yYzQbn-CRs4L1moZaAqr90" target="_blank">text-to-code.zip</a></td>
+            <td><a href="https://drive.google.com/file/d/1rQjQh4Mle3yYzQbn-CRs4L1moZaAqr90" target="_blank">[LINK]</a></td>
             <td><a href="https://github.com/wasiahmad/PLBART/tree/main/scripts/text_to_code">[LINK]</a></td>
-            <td><a href="https://drive.google.com/drive/folders/11vdZ5cbT23-KII_4Rn1QvsJBEcV7PiuJ" target="_blank">[concode]</a></td>
+            <td><a href="https://drive.google.com/drive/folders/1Yk6YjoBELcKLFp8IyLF0-YfNQIY9NAqH" target="_blank">[LINK]</a></td>
         </tr>
         <tr>
-            <td rowspan=4>Code-to-Code</td>
+            <td rowspan=4>Code to Code</td>
             <td><a href="https://github.com/microsoft/CodeXGLUE/tree/main/Code-Code/code-to-code-trans" target="_blank">Code translation</a></td>
             <td>Java, C#</td>
-            <td rowspan=4><a href="https://drive.google.com/file/d/15jokCxFQ9BUbptMsrfj4RdH_KiNkTRP2" target="_blank">code-to-code.zip</a></td>
+            <td rowspan=4><a href="https://drive.google.com/file/d/15jokCxFQ9BUbptMsrfj4RdH_KiNkTRP2" target="_blank">[LINK]</a></td>
             <td><a href="https://github.com/wasiahmad/PLBART/tree/main/scripts/code_to_code/translation">[LINK]</a></td>
-            <td>
-                <a href="https://drive.google.com/drive/folders/1OTibmDXrNXcg4an1ehSx1W-JNG5M2kRY" target="_blank">[java_cs]</a>
-                <br>
-                <a href="https://drive.google.com/drive/folders/1_TCQMfGhuS8-DcE-SII8sEbxryEWG3Zx" target="_blank">[cs_java]</a>
-            </td>
+            <td><a href="https://drive.google.com/drive/folders/1KKdBWTRjnxC70icQrCbCXuj6ahMFQlE0" target="_blank">[LINK]</a></td>
         </tr>
         <tr>
             <td><a href="https://github.com/microsoft/CodeXGLUE/tree/main/Code-Code/code-refinement" target="_blank">Code refinement</a></td>
             <td>Java</td>
             <td><a href="https://github.com/wasiahmad/PLBART/tree/main/scripts/code_to_code/refinement">[LINK]</a></td>
-            <td>
-                <a href="https://drive.google.com/drive/folders/16WgiNhYQkKm_oLJuqXddgnWlvsdS9i6Y" target="_blank">[small]</a>
-                <br>
-                <a href="https://drive.google.com/drive/folders/1jOaH7l0OtKIEQL0j-IGeYCZ_2mV07h9x" target="_blank">[medium]</a>
-            </td>
+            <td><a href="https://drive.google.com/drive/folders/19YYUvTnZbWeY064fZ165mmS4QHOxuYnC" target="_blank">[LINK]</a></td>
         </tr>
         <tr>
             <td><a href="https://github.com/microsoft/CodeXGLUE/tree/main/Code-Code/Clone-detection-BigCloneBench" target="_blank">Clone detection</a></td>
             <td>Java</td>
             <td><a href="https://github.com/wasiahmad/PLBART/tree/main/scripts/code_to_code/clone_detection">[LINK]</a></td>
-            <td><a href="https://drive.google.com/drive/folders/1WnlmmOi4py3bQsS0zSfXxRLoSue_Iv-J" target="_blank">[clone_detection]</a></td>
+            <td><a href="https://drive.google.com/drive/folders/1bbjrvd_-etkJ1Za3fqv5Ea59vH3Wrf_1" target="_blank">[LINK]</a></td>
         </tr>
         <tr>
             <td><a href="https://github.com/microsoft/CodeXGLUE/tree/main/Code-Code/Defect-detection" target="_blank">Defect detection</a></td>
             <td>C/C++</td>
             <td><a href="https://github.com/wasiahmad/PLBART/tree/main/scripts/code_to_code/defect_prediction">[LINK]</a></td>
-            <td><a href="https://drive.google.com/drive/folders/1zSAGkHKzlRFQjoZ2qTnkrRWrjGMDfzR0" target="_blank">[devign]</a></td>
+            <td><a href="https://drive.google.com/drive/folders/1_YtIeBY2rLH-ICU1GsK7rmmt_ocxX4bd" target="_blank">[LINK]</a></td>
         </tr>
     </tbody>
 </table>
