@@ -1,15 +1,22 @@
-# [PLBART](https://www.aclweb.org/anthology/2021.naacl-main.211/)
+# PLBART
 
 Official code release of our NAACL 2021 work, [Unified Pre-training for Program Understanding and Generation](https://www.aclweb.org/anthology/2021.naacl-main.211/). 
 We present **PLBART** that is pre-trained on a large collection Java and Python functions and natural language descriptions collected from Github and StackOverflow, respectively.
 
 We present the file structure of this repository [here](https://github.com/wasiahmad/PLBART/blob/main/FILEs.md).
 
+### What's New:
 
-### [[Optional] Setup]()
+- August 2021 - [Multilingual multi-task learning using PLBART](https://github.com/wasiahmad/PLBART/blob/main/multilingual/README.md)
+- July 2021 - Released PLBART checkpoints fine-tuned on downstream tasks
+- June 2021 - Official code release
+- March 2021 - Pre-release of source code
+
+
+### Setup (optional)
 
 We can setup a conda environment in order to run PLBART experiments, the first step is to download the dependencies. 
-We assume `[anaconda](https://www.anaconda.com/)` and Python 3.6 is installed. The additional requirements 
+We assume [anaconda](https://www.anaconda.com/) and Python 3.6 is installed. The additional requirements 
 (as noted in [requirements.txt](https://github.com/wasiahmad/PLBART/blob/main/requirements.txt) can be installed by 
 running the following script:
 
@@ -18,7 +25,7 @@ bash install_tools.sh
 ```
 
 
-### [Pre-training]()
+### Pre-training
 
 Install [apex](https://github.com/nvidia/apex#quick-start) for fp16 training. Then, follow the following steps.
 
@@ -41,7 +48,7 @@ bash absolute.sh GPU_IDS
 Note. We pre-trained PLBART on 8 `GeForce RTX 2080` (11gb) GPUs (took 11.5 days).
 
 
-### [Fine-tuning on Downstream Tasks]()
+### Fine-tuning on Downstream Tasks
 
 We fine-tune and evaluate PLBART on three types of tasks.
 
@@ -53,14 +60,14 @@ We fine-tune and evaluate PLBART on three types of tasks.
             <th>Language(s)</th>
             <th>Data</th>
             <th>Scripts</th>
-            <th>Fine-tuned Checkpoints</th>
+            <th>Checkpoints</th>
         </tr>
     </thead>
     <tbody>
         <tr>
             <td>Code to Text</td>
             <td><a href="https://github.com/microsoft/CodeXGLUE/tree/main/Code-Text/code-to-text" target="_blank">Code summarization</a></td>
-            <td>Python, Java, Ruby <br> PHP, Javascript, Go</td>
+            <td>Python, Java, Ruby, <br> PHP, Javascript, Go</td>
             <td><a href="https://drive.google.com/file/d/1m1IvGgPhDBg-SL-LajtFGTLyAJVbD0i3" target="_blank">[LINK]</a></td>
             <td><a href="https://github.com/wasiahmad/PLBART/tree/main/scripts/code_to_text">[LINK]</a></td>
             <td><a href="https://drive.google.com/drive/folders/1z_xC4-k8liAT1ir6r75sGza5BIXhzwUU" target="_blank">[LINK]</a></td>
@@ -140,7 +147,7 @@ cd ../..
 Note. We fine-tuned PLBART on 1 `GeForce RTX 2080` (11gb) GPU.
 
 
-### [FAQ]()
+### FAQ
 
 __`mbart_base` task is not present in `fairseq==0.9.0` official release.__
 
@@ -162,12 +169,12 @@ __What can be the maximum input and output lengths for PLBART?__
 The maximum length is 512.
 
 
-### [Acknowledgement]()
+### Acknowledgement
 
 PLBART uses [Fairseq](https://github.com/pytorch/fairseq), [codeXglue](https://github.com/microsoft/CodeXGLUE), and [TransCoder](https://github.com/facebookresearch/TransCoder) and thanks the authors of these works for their contribution.
 
 
-### [Citation]()
+### Citation
 
 ```
 @inproceedings{ahmad-etal-2021-unified,

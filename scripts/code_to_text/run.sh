@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+export PYTHONIOENCODING=utf-8;
 CURRENT_DIR=`pwd`
 HOME_DIR=`realpath ../..`;
 
@@ -112,7 +113,9 @@ fairseq-generate $PATH_2_DATA/data-bin $USER_DIR \
     --beam 10 > $FILE_PREF
 
 cat $FILE_PREF | grep -P "^H" |sort -V |cut -f 3- | sed 's/\[${TARGET}\]//g' > $FILE_PREF.hyp;
-python evaluator.py $GOUND_TRUTH_PATH $FILE_PREF.hyp 2>&1 | tee ${RESULT_FILE};
+python ${HOME_DIR}/evaluation/nl_eval.py \
+        --references $GOUND_TRUTH_PATH \
+        --predictions $FILE_PREF.hyp 2>&1 | tee ${RESULT_FILE};
 
 }
 

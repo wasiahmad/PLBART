@@ -30,8 +30,10 @@ except:
     pass
 
 STRINGS_AND_COMMENTS_TOKEN_KINDS = {TokenKind.LITERAL, TokenKind.COMMENT}
-logging.basicConfig(
-    filename='timeout_cpp_tokenizer_examples.log', level=logging.DEBUG)
+# logging.basicConfig(
+#     filename='timeout_cpp_tokenizer_examples.log', level=logging.DEBUG
+# )
+logging.basicConfig(level=logging.INFO)
 
 idx = clang.cindex.Index.create()
 

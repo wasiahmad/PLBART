@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+export PYTHONIOENCODING=utf-8;
 CURRENT_DIR=`pwd`
 HOME_DIR=`realpath ../../..`;
 
@@ -91,7 +92,7 @@ function generate () {
 model=${SAVE_DIR}/checkpoint_best.pt
 RESULT_FILE=${SAVE_DIR}/result.txt
 
-python eval.py \
+python evaluator.py \
     --user_dir $USER_DIR \
     --model_dir ${SAVE_DIR} \
     --model_name checkpoint_best.pt \

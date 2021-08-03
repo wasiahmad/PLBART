@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+export PYTHONIOENCODING=utf-8;
 CURRENT_DIR=`pwd`
 HOME_DIR=`realpath ../../..`;
 
@@ -118,15 +119,15 @@ fairseq-generate $PATH_2_DATA/data-bin \
 
 cat $FILE_PREF | grep -P "^H" |sort -V |cut -f 3- | sed 's/\[${TARGET}\]//g' > $FILE_PREF.hyp
 
-echo "CodeXGlue Evaluation" >> ${RESULT_FILE}
-python ${HOME_DIR}/evaluation/evaluator.py \
+echo "CodeXGlue Evaluation" > ${RESULT_FILE}
+python ${HOME_DIR}/evaluation/bleu.py \
     --ref $GOUND_TRUTH_PATH \
     --pre $FILE_PREF.hyp \
     2>&1 | tee -a ${RESULT_FILE};
 
 echo "CodeBLEU Evaluation" >> ${RESULT_FILE}
 cd ${HOME_DIR}/evaluation/CodeBLEU;
-python calc_code_bleu.py \
+PYTHONPATH=${HOME_DIR} python calc_code_bleu.py \
     --refs $GOUND_TRUTH_PATH \
     --hyp $FILE_PREF.hyp \
     --lang ${LANG_MAP[$TARGET]} \

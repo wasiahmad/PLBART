@@ -14,17 +14,15 @@ import sys
 from fractions import Fraction
 import warnings
 from collections import Counter
-
-from utils import ngrams
-import pdb
+from evaluation.CodeBLEU.utils import ngrams
 
 
 def sentence_bleu(
-    references,
-    hypothesis,
-    weights=(0.25, 0.25, 0.25, 0.25),
-    smoothing_function=None,
-    auto_reweigh=False,
+        references,
+        hypothesis,
+        weights=(0.25, 0.25, 0.25, 0.25),
+        smoothing_function=None,
+        auto_reweigh=False,
 ):
     """
     Calculate BLEU score (Bilingual Evaluation Understudy) from
@@ -89,11 +87,11 @@ def sentence_bleu(
 
 
 def corpus_bleu(
-    list_of_references,
-    hypotheses,
-    weights=(0.25, 0.25, 0.25, 0.25),
-    smoothing_function=None,
-    auto_reweigh=False,
+        list_of_references,
+        hypotheses,
+        weights=(0.25, 0.25, 0.25, 0.25),
+        smoothing_function=None,
+        auto_reweigh=False,
 ):
     """
     Calculate a single corpus-level BLEU score (aka. system-level BLEU) for all

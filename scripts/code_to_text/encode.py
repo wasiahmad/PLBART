@@ -101,7 +101,6 @@ def load_data(input_file, src_field, tgt_field, src_lang):
                         src = " ".join(tokens)
                     else:
                         src = " ".join(ex['code_tokens'])
-                    pass
             src = src.replace('\n', ' ').strip()
             tgt = ex[tgt_field]
             if isinstance(tgt, list):

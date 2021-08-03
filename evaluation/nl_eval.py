@@ -14,11 +14,9 @@ score_set(s, testid, refids, n=4): Interface with dataset.py; calculate BLEU sco
 The reason for breaking the BLEU computation into three phases cook_refs(), cook_test(), and score_cooked() is to allow the caller to calculate BLEU scores for multiple test sets as efficiently as possible.
 '''
 
-import json
-import subprocess
+import re
 import sys
 import math
-import re
 import xml.sax.saxutils
 
 # Added to bypass NIST-style pre-processing of hyp and ref files -- wade
@@ -163,24 +161,23 @@ def splitPuncts(line):
 def computeMaps(prediction_file, goldfile):
     predictionMap = {}
     goldMap = {}
-    predictions = open(prediction_file, 'r')
-    gf = open(goldfile, 'r')
+    predictions = open(prediction_file, 'r', encoding='utf-8')
+    gf = open(goldfile, 'r', encoding='utf-8')
 
     for rid, row in enumerate(predictions):
         pred = row.strip()
         predictionMap[rid] = [splitPuncts(pred.strip().lower())]
 
     for rid, row in enumerate(gf):
+        # (rid, pred) = row.split('\t')
         if rid in predictionMap:  # Only insert if the id exists for the method
             if rid not in goldMap:
                 goldMap[rid] = []
-            # goldMap[rid].append(splitPuncts(row.strip().lower()))
-            row = ' '.join(json.loads(row.strip())['docstring_tokens'])
-            goldMap[rid].append(splitPuncts(row.lower()))
+            goldMap[rid].append(splitPuncts(row.strip().lower()))
 
     predictions.close()
     gf.close()
-    sys.stderr.write('Total: ' + str(len(goldMap)) + '\n')
+    # sys.stderr.write('Total: ' + str(len(goldMap)) + '\n')
     return (goldMap, predictionMap)
 
 
@@ -199,8 +196,16 @@ def bleuFromMaps(m1, m2):
 
 
 if __name__ == '__main__':
-    reference_file = sys.argv[1]
-    prediction_file = sys.argv[2]
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Evaluate leaderboard predictions for BigCloneBench dataset.')
+    parser.add_argument('--references', help="filename of the labels, in txt format.")
+    parser.add_argument('--predictions', help="filename of the leaderboard predictions, in txt format.")
+
+    args = parser.parse_args()
+
+    reference_file = args.references
+    prediction_file = args.predictions
     (goldMap, predictionMap) = computeMaps(prediction_file, reference_file)
     res = bleuFromMaps(goldMap, predictionMap)
-    print(res[0])
+    print("BLEU Score:\t%.2f" % res[0])

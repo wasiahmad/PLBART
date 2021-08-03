@@ -18,16 +18,15 @@ from fractions import Fraction
 import warnings
 from collections import Counter
 
-from utils import ngrams
-import pdb
+from evaluation.CodeBLEU.utils import ngrams
 
 
 def sentence_bleu(
-    references,
-    hypothesis,
-    weights=(0.25, 0.25, 0.25, 0.25),
-    smoothing_function=None,
-    auto_reweigh=False,
+        references,
+        hypothesis,
+        weights=(0.25, 0.25, 0.25, 0.25),
+        smoothing_function=None,
+        auto_reweigh=False,
 ):
     """
     Calculate BLEU score (Bilingual Evaluation Understudy) from
@@ -92,11 +91,11 @@ def sentence_bleu(
 
 
 def corpus_bleu(
-    list_of_references,
-    hypotheses,
-    weights=(0.25, 0.25, 0.25, 0.25),
-    smoothing_function=None,
-    auto_reweigh=False,
+        list_of_references,
+        hypotheses,
+        weights=(0.25, 0.25, 0.25, 0.25),
+        smoothing_function=None,
+        auto_reweigh=False,
 ):
     """
     Calculate a single corpus-level BLEU score (aka. system-level BLEU) for all
@@ -201,7 +200,7 @@ def corpus_bleu(
         p_n, references=references, hypothesis=hypothesis, hyp_len=hyp_lengths
     )
     # pdb.set_trace()
-    s = (w_i * math.log(p_i[0]/p_i[1]) for w_i, p_i in zip(weights, p_n))
+    s = (w_i * math.log(p_i[0] / p_i[1]) for w_i, p_i in zip(weights, p_n))
     s = bp * math.exp(math.fsum(s))
     return s
 
@@ -264,7 +263,7 @@ def modified_recall(references, hypothesis, n):
         # # Usually this happens when the ngram order is > len(reference).
         # denominator += max(1, sum(counts.values()))
 
-    #return Fraction(numerator, denominator, _normalize=False)
+    # return Fraction(numerator, denominator, _normalize=False)
     return numerator, denominator
 
 
@@ -446,7 +445,7 @@ class SmoothingFunction:
         Smoothing method 1: Add *epsilon* counts to precision with 0 counts.
         """
         return [
-            ((p_i[0] + self.epsilon),  p_i[1])
+            ((p_i[0] + self.epsilon), p_i[1])
             if p_i[0] == 0
             else p_i
             for p_i in p_n
