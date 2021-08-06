@@ -38,7 +38,7 @@ for LANG in java python; do
     for SPLIT in valid test; do
         for j in functions_class functions_standalone; do
             python $SPM_ENC_SCRIPT \
-                --model-file cbart/sentencepiece.bpe.model \
+                --model-file $SPM_DIR/sentencepiece.bpe.model \
                 --inputs "$GITHUB_DIR/$LANG/$SPLIT.$j.tok" \
                 --outputs "$GITHUB_DIR/$LANG/$SPLIT.$j.spm" \
                 --max_len 510 \
@@ -58,7 +58,7 @@ for LANG in java python; do
     for i in $(seq 0 7); do
         echo "$SO_DIR/train.$i.descriptions.txt"
         python $SPM_ENC_SCRIPT \
-            --model-file cbart/sentencepiece.bpe.model \
+            --model-file $SPM_DIR/sentencepiece.bpe.model \
             --inputs "$SO_DIR/train.$i.description.txt" \
             --outputs "$SO_DIR/train.$i.description.spm" \
             --max_len 510 \
@@ -66,7 +66,7 @@ for LANG in java python; do
     done
     for SPLIT in valid test; do
         python $SPM_ENC_SCRIPT \
-            --model-file cbart/sentencepiece.bpe.model \
+            --model-file $SPM_DIR/sentencepiece.bpe.model \
             --inputs "$SO_DIR/$SPLIT.description.txt" \
             --outputs "$SO_DIR/$SPLIT.description.spm" \
             --max_len 510 \
