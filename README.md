@@ -42,7 +42,7 @@ Go to `data/stackoverflow` directory and follow instructions.
 ```bash
 cd pretrain
 bash binarize.sh
-bash absolute.sh GPU_IDS
+bash pretrain.sh GPU_IDS
 ```
 
 Note. We pre-trained PLBART on 8 `GeForce RTX 2080` (11gb) GPUs (took 11.5 days).

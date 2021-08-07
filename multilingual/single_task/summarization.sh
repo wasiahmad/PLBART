@@ -20,7 +20,7 @@ if [[ $LANGUAGE_GROUP_CORRECT = "" ]] ; then
     exit;
 fi
 
-GROUP_LISTS="java python go ruby php js"
+GROUP_LISTS="java python go ruby php javascript"
 LANGUAGE_GROUP_CORRECT=`echo $GROUP_LISTS | grep -w $LANG`;
 if [[ $LANGUAGE_GROUP_CORRECT = "" ]]; then
     echo "LANGUAGE(2nd parameter) must be one of the following";
@@ -42,16 +42,16 @@ BATCH_SIZE=8;
 UPDATE_FREQ=4;
 
 # CSNET data size is as follows
-# java: 165k, python: 252k, php: 241k, go: 167k, js: 58k, ruby:25k
+# java: 165k, python: 252k, php: 241k, go: 167k, javascript: 58k, ruby:25k
 # So, number of mini-batches for each language would be:
-# java: ~5100, python: ~7800, php: ~7500, go: ~5200, js: ~1800, ruby: ~780
+# java: ~5100, python: ~7800, php: ~7500, go: ~5200, javascript: ~1800, ruby: ~780
 
 declare -A LANG_WISE_WARMUP
 LANG_WISE_WARMUP['java']=5000
 LANG_WISE_WARMUP['python']=5000
 LANG_WISE_WARMUP['php']=5000
 LANG_WISE_WARMUP['go']=5000
-LANG_WISE_WARMUP['js']=2000
+LANG_WISE_WARMUP['javascript']=2000
 LANG_WISE_WARMUP['ruby']=1000
 
 
@@ -158,19 +158,19 @@ else
     SAVE_DIR=${SAVE_DIR}/summarization;
     mkdir -p $SAVE_DIR
     if [[ "$LANGUAGE_GROUP" == 'all' ]]; then
-        languages=(java python js php ruby go);
+        languages=(java python javascript php ruby go);
     elif [[ "$LANGUAGE_GROUP" == 'compiled' ]]; then
         languages=(java ruby go);
     elif [[ "$LANGUAGE_GROUP" == 'interpreted' ]]; then
-        languages=(php python js);
+        languages=(php python javascript);
     elif [[ "$LANGUAGE_GROUP" == 'static' ]]; then
         languages=(java go);
     elif [[ "$LANGUAGE_GROUP" == 'dynamic' ]]; then
-        languages=(js python php ruby);
+        languages=(javascript python php ruby);
     elif [[ "$LANGUAGE_GROUP" == 'strong' ]]; then
         languages=(java go python ruby);
     elif [[ "$LANGUAGE_GROUP" == 'weak' ]]; then
-        languages=(php js);
+        languages=(php javascript);
     fi
 
     # a list language pairs to train multilingual models, e.g. "java-en,python-en"

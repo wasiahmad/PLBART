@@ -16,7 +16,9 @@ The reason for breaking the BLEU computation into three phases cook_refs(), cook
 
 import re
 import sys
+import json
 import math
+import argparse
 import xml.sax.saxutils
 
 # Added to bypass NIST-style pre-processing of hyp and ref files -- wade
@@ -158,7 +160,7 @@ def splitPuncts(line):
     return ' '.join(re.findall(r"[\w]+|[^\s\w]", line))
 
 
-def computeMaps(prediction_file, goldfile):
+def computeMaps(prediction_file, goldfile, is_goldfile_json):
     predictionMap = {}
     goldMap = {}
     predictions = open(prediction_file, 'r', encoding='utf-8')
@@ -173,6 +175,8 @@ def computeMaps(prediction_file, goldfile):
         if rid in predictionMap:  # Only insert if the id exists for the method
             if rid not in goldMap:
                 goldMap[rid] = []
+            if is_goldfile_json:
+                row = ' '.join(json.loads(row.strip())['docstring_tokens'])
             goldMap[rid].append(splitPuncts(row.strip().lower()))
 
     predictions.close()
@@ -196,16 +200,15 @@ def bleuFromMaps(m1, m2):
 
 
 if __name__ == '__main__':
-    import argparse
-
     parser = argparse.ArgumentParser(description='Evaluate leaderboard predictions for BigCloneBench dataset.')
     parser.add_argument('--references', help="filename of the labels, in txt format.")
     parser.add_argument('--predictions', help="filename of the leaderboard predictions, in txt format.")
+    parser.add_argument('--json_refs', action='store_true', help='reference files are JSON files')
 
     args = parser.parse_args()
 
     reference_file = args.references
     prediction_file = args.predictions
-    (goldMap, predictionMap) = computeMaps(prediction_file, reference_file)
+    (goldMap, predictionMap) = computeMaps(prediction_file, reference_file, args.json_refs)
     res = bleuFromMaps(goldMap, predictionMap)
     print("BLEU Score:\t%.2f" % res[0])

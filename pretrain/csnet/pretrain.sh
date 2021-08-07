@@ -1,23 +1,17 @@
 #!/usr/bin/env bash
 
 CURRENT_DIR=`pwd`
-HOME_DIR=`realpath ../`;
+HOME_DIR=`realpath ../..`;
 
-DATA_HOME=${HOME_DIR}/data
+DATA_HOME=${CURRENT_DIR}/data
 SPM_MODEL=${HOME_DIR}/sentencepiece/sentencepiece.bpe.model
-langs=java,python,en_XX
+langs=java,python,en_XX,javascript,php,ruby,go
 
-DATA_DIR=""
-for (( idx=0; idx<=7; idx++ )); do
-    DATA_DIR+="${DATA_HOME}/shards/shard${idx}"
-    if [[ $idx < 7 ]]; then
-        DATA_DIR+=":"
-    fi
-done
+DATA_DIR=${DATA_HOME}/shard
 
-SAVE_DIR=${HOME_DIR}/pretrain
+SAVE_DIR=${CURRENT_DIR}/checkpoints
 mkdir -p $SAVE_DIR
-TENSORBOARD_LOGDIR=${SAVE_DIR}/tensorboard_logs
+TENSORBOARD_LOGDIR=${CURRENT_DIR}/tensorboard_logs
 
 MAX_UPDATE=100000
 WARMUP_UPDATES=2000
@@ -54,7 +48,8 @@ fairseq-train $DATA_DIR \
     --task multilingual_denoising \
     --criterion cross_entropy \
     --dropout 0.1 \
-    --attention-dropout 0.1 --relu-dropout 0.0 \
+    --attention-dropout 0.1 \
+    --relu-dropout 0.0 \
     --weight-decay 0.01 \
     --optimizer adam \
     --adam-eps 1e-06 \

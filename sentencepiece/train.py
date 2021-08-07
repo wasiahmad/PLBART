@@ -38,6 +38,7 @@ def main(args):
         '{}/test.description.txt'.format(STACKOVERFLOW_DIR)
     ]
 
+    # we may consider adding --user_defined_symbols=INDENT,DEDENT,NEW_LINE
     spm.SentencePieceTrainer.train(
         '--input={} --vocab_size=50000 --model_prefix=sentencepiece.bpe '
         '--character_coverage=1.0 --model_type=bpe'.format(','.join(FILES))

@@ -58,6 +58,6 @@ fairseq-preprocess \
 
 mkdir -p $DATA_DIR;
 PYTHONPATH=${HOME_DIR} python process.py;
-for lang in java python ruby go js php; do
+for lang in java python ruby go javascript php; do
     spm_preprocess $lang && binarize $lang
 done

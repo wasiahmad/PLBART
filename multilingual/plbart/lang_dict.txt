@@ -1,7 +1,7 @@
 java
 python
 en_XX
-js
+javascript
 php
 ruby
 go

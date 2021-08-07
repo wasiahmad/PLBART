@@ -20,7 +20,7 @@ if [[ $LANGUAGE_GROUP_CORRECT = "" ]] ; then
     exit;
 fi
 
-GROUP_LISTS="java python go ruby php js"
+GROUP_LISTS="java python go ruby php javascript"
 LANGUAGE_GROUP_CORRECT=`echo $GROUP_LISTS | grep -w $LANG`;
 if [[ $LANGUAGE_GROUP_CORRECT = "" ]]; then
     echo "LANGUAGE(3rd parameter) must be one of the following";
@@ -193,21 +193,21 @@ then
     evaluate_summarization $LANG;
 else
     if [[ "$LANGUAGE_GROUP" == 'all' ]]; then
-        languages=(java python js php ruby go);
+        languages=(java python javascript php ruby go);
         MAX_UPDATE=400000;
         WARMUP=5000;
     elif [[ "$LANGUAGE_GROUP" == 'compiled' ]]; then
         languages=(java ruby go);
     elif [[ "$LANGUAGE_GROUP" == 'interpreted' ]]; then
-        languages=(php python js);
+        languages=(php python javascript);
     elif [[ "$LANGUAGE_GROUP" == 'static' ]]; then
         languages=(java go);
     elif [[ "$LANGUAGE_GROUP" == 'dynamic' ]]; then
-        languages=(js python php ruby);
+        languages=(javascript python php ruby);
     elif [[ "$LANGUAGE_GROUP" == 'strong' ]]; then
         languages=(java go python ruby);
     elif [[ "$LANGUAGE_GROUP" == 'weak' ]]; then
-        languages=(php js);
+        languages=(php javascript);
     fi
 
     lang_pairs="";

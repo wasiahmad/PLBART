@@ -20,12 +20,11 @@ def count_file_lines(file_path):
 def prepare():
     for lang in ['go', 'java', 'python', 'ruby', 'javascript', 'php']:
         for split in ['train', 'valid', 'test']:
-            lang_iso = 'js' if lang == 'javascript' else lang
             src_writer = open(
-                'processed/{}.{}-en_XX.{}'.format(split, lang_iso, lang_iso), 'w', encoding='utf-8'
+                'processed/{}.{}-en_XX.{}'.format(split, lang, lang), 'w', encoding='utf-8'
             )
             tgt_writer = open(
-                'processed/{}.{}-en_XX.en_XX'.format(split, lang_iso), 'w', encoding='utf-8'
+                'processed/{}.{}-en_XX.en_XX'.format(split, lang), 'w', encoding='utf-8'
             )
             filename = '{}/{}.jsonl'.format(lang, split)
             with open(filename) as f:
@@ -33,24 +32,32 @@ def prepare():
                         f, total=count_file_lines(filename), desc="{}-{}".format(lang, split)
                 ):
                     ex = json.loads(line.strip())
+                    code = ' '.join(ex['code_tokens'])
+                    code = re.sub("[\n\r\t ]+", " ", code).strip()
+                    docstring = ' '.join(ex['docstring_tokens'])
+                    docstring = re.sub("[\n\r\t ]+", " ", docstring).strip()
+                    if len(code) == 0 or len(docstring) == 0:
+                        continue
+
+                    tokenized_code = None
+                    if lang == 'python' or lang == 'java':
+                        _tokens = tokenize_python(ex['code']) \
+                            if lang == 'python' else tokenize_java(ex['code'])
+                        tokenized_code = ' '.join(_tokens)
+                        tokenized_code = re.sub("[\n\r\t ]+", " ", tokenized_code).strip()
+                        if len(tokenized_code) == 0:
+                            continue
+
                     try:
                         if lang == 'python' or lang == 'java':
-                            code_tokens = tokenize_python(ex['code']) \
-                                if lang == 'python' else tokenize_java(ex['code'])
-                            if len(code_tokens) > 0:
-                                raise ValueError('Empty tokenized code')
+                            # this line can throw error `UnicodeEncodeError`
+                            src_writer.write(tokenized_code + '\n')
                         else:
-                            code_tokens = ex['code_tokens']
+                            src_writer.write(code + '\n')
                     except:
-                        code_tokens = ex['code_tokens']
+                        src_writer.write(code + '\n')
 
-                    code = ' '.join(code_tokens)
-                    code = re.sub("[\n\r\t ]+", " ", code)
-                    docstring = ' '.join(ex['docstring_tokens'])
-                    docstring = re.sub("[\n\r\t ]+", " ", docstring)
-                    if len(code) > 0 and len(docstring) > 0:
-                        src_writer.write(code.strip() + '\n')
-                        tgt_writer.write(docstring.strip() + '\n')
+                    tgt_writer.write(docstring + '\n')
 
             src_writer.close()
             tgt_writer.close()

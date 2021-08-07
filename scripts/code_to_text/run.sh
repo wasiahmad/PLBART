@@ -115,7 +115,8 @@ fairseq-generate $PATH_2_DATA/data-bin $USER_DIR \
 cat $FILE_PREF | grep -P "^H" |sort -V |cut -f 3- | sed 's/\[${TARGET}\]//g' > $FILE_PREF.hyp;
 python ${HOME_DIR}/evaluation/nl_eval.py \
         --references $GOUND_TRUTH_PATH \
-        --predictions $FILE_PREF.hyp 2>&1 | tee ${RESULT_FILE};
+        --predictions $FILE_PREF.hyp \
+        --json_refs 2>&1 | tee ${RESULT_FILE};
 
 }
 
