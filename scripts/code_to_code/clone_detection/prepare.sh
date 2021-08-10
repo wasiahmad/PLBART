@@ -46,8 +46,8 @@ fairseq-preprocess \
     --validpref $DATA_DIR/processed/valid.input0 \
     --testpref $DATA_DIR/processed/test.input0 \
     --destdir $DATA_DIR/processed/data-bin/input0 \
-    --workers 60 \
-    --srcdict ${SPM_DIR}/dict.txt;
+    --srcdict ${SPM_DIR}/dict.txt \
+    --workers 60;
 fairseq-preprocess \
     --only-source \
     --trainpref $DATA_DIR/processed/train.label \

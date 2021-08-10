@@ -43,13 +43,13 @@ for lang in java python javascript php go ruby; do
                 --split $split \
                 --source_dir $OUT_DIR \
                 --target_pl_dir $OUT_DIR/$lang \
-                --target_nl_dir $OUT_DIR/en_XX ;
+                --target_nl_dir $OUT_DIR/en_XX \
+                --workers 60;
         fi
     done
 done
 
 }
-
 
 download
 prepare

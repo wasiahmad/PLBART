@@ -21,7 +21,7 @@ done
 
 export CUDA_VISIBLE_DEVICES=$1
 
-PATH_2_DATA=${HOME_DIR}/data/codeXglue/code-to-code/clone_detection/processed
+PATH_2_DATA=${HOME_DIR}/data/codeXglue/code-to-code/defect_prediction/processed
 
 SAVE_DIR=${CURRENT_DIR}/devign
 mkdir -p ${SAVE_DIR}
@@ -89,12 +89,10 @@ fairseq-train $PATH_2_DATA/data-bin \
 
 function generate () {
 
-model=${SAVE_DIR}/checkpoint_best.pt
 RESULT_FILE=${SAVE_DIR}/result.txt
-
 python evaluator.py \
     --user_dir $USER_DIR \
-    --model_dir ${SAVE_DIR} \
+    --model_dir $SAVE_DIR \
     --model_name checkpoint_best.pt \
     --data_bin_path ${PATH_2_DATA}/data-bin \
     --input_file ${PATH_2_DATA}/test.input0 \

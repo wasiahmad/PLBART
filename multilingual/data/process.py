@@ -39,7 +39,6 @@ def prepare():
                     if len(code) == 0 or len(docstring) == 0:
                         continue
 
-                    tokenized_code = None
                     if lang == 'python' or lang == 'java':
                         _tokens = tokenize_python(ex['code']) \
                             if lang == 'python' else tokenize_java(ex['code'])
@@ -47,14 +46,12 @@ def prepare():
                         tokenized_code = re.sub("[\n\r\t ]+", " ", tokenized_code).strip()
                         if len(tokenized_code) == 0:
                             continue
-
-                    try:
-                        if lang == 'python' or lang == 'java':
-                            # this line can throw error `UnicodeEncodeError`
+                        try:
+                            # this line can throw error UnicodeEncodeError
                             src_writer.write(tokenized_code + '\n')
-                        else:
+                        except:
                             src_writer.write(code + '\n')
-                    except:
+                    else:
                         src_writer.write(code + '\n')
 
                     tgt_writer.write(docstring + '\n')

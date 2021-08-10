@@ -20,8 +20,9 @@ Chin-Yew Lin, Franz Josef Och. ORANGE: a method for evaluating automatic
 evaluation metrics for machine translation. COLING 2004.
 """
 
-import collections
 import math
+import argparse
+import collections
 
 
 def _get_ngrams(segment, max_order):
@@ -130,8 +131,6 @@ def _bleu(ref_file, trans_file, subword_option=None):
 
 
 if __name__ == '__main__':
-    import argparse
-
     parser = argparse.ArgumentParser(description='Evaluate leaderboard predictions for BigCloneBench dataset.')
     parser.add_argument('--references', '-ref', help="filename of the labels, in txt format.")
     parser.add_argument('--predictions', '-pre', help="filename of the leaderboard predictions, in txt format.")

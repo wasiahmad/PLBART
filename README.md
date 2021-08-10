@@ -45,7 +45,18 @@ bash binarize.sh
 bash pretrain.sh GPU_IDS
 ```
 
-Note. We pre-trained PLBART on 8 `GeForce RTX 2080` (11gb) GPUs (took 11.5 days).
+**[Note]** We pre-trained PLBART on 8 `GeForce RTX 2080` (11gb) GPUs (took ~11.5 days). If you want to pre-train PLBART 
+using more GPUs or GPUs with more memory, adjust `MAX_SENTENCES`, `MAX_TOKENS`, `UPDATE_FREQ` accordingly to maintain an 
+effective batch size of 2048. According to [fairseq](https://github.com/pytorch/fairseq), effective batch size is equal 
+to:
+
+<p align="center">
+  <b>PER_GPU_TRAIN_BATCH_SIZE * NUM_GPU * UPDATE_FREQ</b>
+</p>
+
+Note that, `MAX_TOKENS` refers to the size of each mini-batch, in terms of the number of tokens. During our experiments,
+we noticed that in an 11gb GPU, maximum 2048 tokens can be accommodated which is equivalent to 4-5 examples. Therefore,
+we set `UPDATE_FREQ` to 60, so that we can achieve an effective batch size of ~2048.
 
 
 ### Fine-tuning on Downstream Tasks
@@ -147,7 +158,15 @@ cd ../..
 Note. We fine-tuned PLBART on 1 `GeForce RTX 2080` (11gb) GPU.
 
 
-### FAQ
+### Notes
+
+__Mismatch in performance reported in the paper and achieved using the released checkpoints.__
+
+There is a difference between PLBART's performances mentioned in the paper and the performance achieved with
+the released checkpoints. We noted them [here](https://docs.google.com/spreadsheets/d/18qfy-zUgXDKcXqR9NB0HsLRdYAmMQZdVSbcJ6M3JKs8/edit?usp=sharing).
+Note that, there is no change in the hyper-parameter setting. We provided the exact same value we used in the bash 
+scripts. The performance difference we observed is perhaps due to running experiments at different point of time. 
+Although we didn't but we recommend to fine-tune PLBART with multiple different seeds and report the average scores. 
 
 __`mbart_base` task is not present in `fairseq==0.9.0` official release.__
 

@@ -14,7 +14,9 @@ def encode(model, sentence, max_positions=512):
     if len(tokens.split(" ")) > max_positions - 2:
         tokens = " ".join(tokens.split(" ")[: max_positions - 2])
     bpe_sentence = "<s> " + tokens + " </s>"
-    tokens = model.task.source_dictionary.encode_line(bpe_sentence, append_eos=False)
+    tokens = model.task.source_dictionary.encode_line(
+        bpe_sentence, add_if_not_exist=False, append_eos=False
+    )
     return tokens.long()
 
 

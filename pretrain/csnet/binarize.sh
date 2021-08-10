@@ -39,14 +39,14 @@ function preprocess_nl () {
 
 python $SPM_ENC_SCRIPT \
     --model-file $SPM_DIR/sentencepiece.bpe.model \
-    --inputs $DATA_DIR/train.docstring.tok \
-    --outputs $DATA_DIR/train.docstring.spm \
+    --inputs $DATA_DIR/en_XX/train.docstring.tok \
+    --outputs $DATA_DIR/en_XX/train.docstring.spm \
     --max_len 510 \
     --workers 60;
 python $SPM_ENC_SCRIPT \
     --model-file $SPM_DIR/sentencepiece.bpe.model \
-    --inputs $DATA_DIR/valid.docstring.tok \
-    --outputs $DATA_DIR/valid.docstring.spm \
+    --inputs $DATA_DIR/en_XX/valid.docstring.tok \
+    --outputs $DATA_DIR/en_XX/valid.docstring.spm \
     --max_len 510 \
     --workers 60;
 
@@ -70,8 +70,8 @@ function binarize_nl () {
 
 fairseq-preprocess \
     --only-source \
-    --trainpref $DATA_DIR/train.docstring.spm \
-    --validpref $DATA_DIR/valid.docstring.spm \
+    --trainpref $DATA_DIR/en_XX/train.docstring.spm \
+    --validpref $DATA_DIR/en_XX/valid.docstring.spm \
     --destdir $SHARD_DIR/en_XX \
     --srcdict $DICT_FILE \
     --workers 60;
