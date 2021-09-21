@@ -24,6 +24,7 @@ export CUDA_VISIBLE_DEVICES=$1
 SOURCE=en_XX
 TARGET=java
 PATH_2_DATA=${HOME_DIR}/data/codeXglue/text-to-code/concode
+CB_EVAL_SCRIPT=${HOME_DIR}/evaluation/CodeBLEU/calc_code_bleu.py
 
 echo "Source: $SOURCE Target: $TARGET"
 
@@ -112,14 +113,13 @@ python evaluator.py \
     2>&1 | tee -a ${RESULT_FILE};
 
 echo "CodeBLEU Evaluation" >> ${RESULT_FILE}
-cd ${HOME_DIR}/evaluation/CodeBLEU;
-PYTHONPATH=${HOME_DIR} python calc_code_bleu.py \
+export PYTHONPATH=${HOME_DIR};
+python $CB_EVAL_SCRIPT \
     --hyp $FILE_PREF.hyp \
     --refs $GOUND_TRUTH_PATH \
     --json_refs \
     --lang $TARGET \
     2>&1 | tee -a ${RESULT_FILE};
-cd $CURRENT_DIR;
 
 }
 

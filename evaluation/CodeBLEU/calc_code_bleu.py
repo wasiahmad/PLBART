@@ -10,6 +10,10 @@ import evaluation.CodeBLEU.weighted_ngram_match as weighted_ngram_match
 import evaluation.CodeBLEU.syntax_match as syntax_match
 import evaluation.CodeBLEU.dataflow_match as dataflow_match
 
+from pathlib import Path
+
+root_directory = Path(__file__).parents[2]
+
 
 def make_weights(reference_tokens, key_word_list):
     return {token: 1 if token in key_word_list else 0.2 \
@@ -26,7 +30,8 @@ def compute_codebleu(hypothesis, references, lang, params='0.25,0.25,0.25,0.25')
     ngram_match_score = bleu.corpus_bleu(tokenized_refs, tokenized_hyps)
 
     # calculate weighted ngram match
-    keywords = [x.strip() for x in open('keywords/' + lang + '.txt', 'r', encoding='utf-8').readlines()]
+    kw_file = root_directory.joinpath("evaluation/CodeBLEU/keywords/{}.txt".format(lang))
+    keywords = [x.strip() for x in open(kw_file, 'r', encoding='utf-8').readlines()]
 
     tokenized_refs_with_weights = \
         [
@@ -45,15 +50,12 @@ def compute_codebleu(hypothesis, references, lang, params='0.25,0.25,0.25,0.25')
     # calculate dataflow match
     dataflow_match_score = dataflow_match.corpus_dataflow_match(references, hypothesis, lang)
 
-    print('ngram match: {0}, weighted ngram match: {1}, syntax_match: {2}, dataflow_match: {3}'.
-          format(ngram_match_score, weighted_ngram_match_score, syntax_match_score, dataflow_match_score))
-
     code_bleu_score = alpha * ngram_match_score \
                       + beta * weighted_ngram_match_score \
                       + gamma * syntax_match_score \
                       + theta * dataflow_match_score
 
-    print('CodeBLEU score: %.2f' % (code_bleu_score * 100.0))
+    return code_bleu_score, (ngram_match_score, weighted_ngram_match_score, syntax_match_score, dataflow_match_score)
 
 
 def main():
@@ -97,7 +99,11 @@ def main():
 
     # references is List(List(String)) where the inner List is a
     # list of reference translations for one example.
-    compute_codebleu(hypothesis, references, args.lang, args.params)
+    code_bleu_score, (ngram_match_score, weighted_ngram_match_score, syntax_match_score, dataflow_match_score) = \
+        compute_codebleu(hypothesis, references, args.lang, args.params)
+    print('ngram match: {0}, weighted ngram match: {1}, syntax_match: {2}, dataflow_match: {3}'.
+          format(ngram_match_score, weighted_ngram_match_score, syntax_match_score, dataflow_match_score))
+    print('CodeBLEU score: %.2f' % (code_bleu_score * 100.0))
 
 
 if __name__ == '__main__':

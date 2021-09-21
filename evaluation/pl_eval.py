@@ -59,7 +59,8 @@ def main():
     EM = round(EM / total * 100, 2)
     bleu_score = round(100 * bleu_score, 2)
     print(f"BLEU: {bleu_score}, EM: {EM}")
-    compute_codebleu(translations, references, args.lang)
+    code_bleu_score, _ = compute_codebleu(translations, references, args.lang)
+    print('CodeBLEU score: %.2f' % (code_bleu_score * 100.0))
 
 
 if __name__ == "__main__":

@@ -158,7 +158,7 @@ cd ../..
 Note. We fine-tuned PLBART on 1 `GeForce RTX 2080` (11gb) GPU.
 
 
-### Notes
+### FAQ / Notes
 
 __Mismatch in performance reported in the paper and achieved using the released checkpoints.__
 

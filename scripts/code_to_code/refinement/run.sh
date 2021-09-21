@@ -28,6 +28,7 @@ SOURCE=source
 TARGET=target
 
 PATH_2_DATA=${HOME_DIR}/data/codeXglue/code-to-code/refinement/${DATA_SIZE}
+CB_EVAL_SCRIPT=${HOME_DIR}/evaluation/CodeBLEU/calc_code_bleu.py
 
 echo "Source: $SOURCE Target: $TARGET"
 
@@ -129,13 +130,12 @@ python ${HOME_DIR}/evaluation/bleu.py \
     2>&1 | tee -a ${RESULT_FILE};
 
 echo "CodeBLEU Evaluation" >> ${RESULT_FILE}
-cd ${HOME_DIR}/evaluation/CodeBLEU;
-PYTHONPATH=${HOME_DIR} python calc_code_bleu.py \
+export PYTHONPATH=${HOME_DIR};
+python $CB_EVAL_SCRIPT \
     --refs $GOUND_TRUTH_PATH \
     --hyp $FILE_PREF.hyp \
     --lang java \
-    2>&1 | tee -a ${RESULT_FILE}
-cd $CURRENT_DIR;
+    2>&1 | tee -a ${RESULT_FILE};
 
 }
 

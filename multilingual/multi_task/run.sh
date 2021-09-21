@@ -126,13 +126,12 @@ fairseq-generate $PATH_2_DATA/binary \
 
 cat $FILE_PREF | grep -P "^H" |sort -V |cut -f 3- | cut -d' ' -f 2- > $FILE_PREF.hyp;
 if [[ "$(wc -l < ${FILE_PREF}.hyp)" -eq "$(wc -l < $GOUND_TRUTH_PATH)" ]]; then
-    cd ${HOME_DIR}/evaluation/CodeBLEU;
-    PYTHONPATH=../.. python ${HOME_DIR}/evaluation/pl_eval.py \
+     export PYTHONPATH=${HOME_DIR}
+     python ${HOME_DIR}/evaluation/pl_eval.py \
         --references ${GOUND_TRUTH_PATH} \
         --predictions ${FILE_PREF}.hyp \
         --detokenize \
         --lang $TARGET_LANG 2>&1 | tee ${RESULT_FILE};
-    cd $CURRENT_DIR;
 else
     echo 'Warning: Number of predictions do not match the number of ground truth!' | tee -a ${RESULT_FILE};
 fi
