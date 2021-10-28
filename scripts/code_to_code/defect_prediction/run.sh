@@ -4,11 +4,6 @@ export PYTHONIOENCODING=utf-8;
 CURRENT_DIR=`pwd`
 HOME_DIR=`realpath ../../..`;
 
-PRETRAINED_MODEL_NAME=checkpoint_11_100000.pt
-PRETRAIN=${HOME_DIR}/pretrain/${PRETRAINED_MODEL_NAME}
-SPM_MODEL=${HOME_DIR}/sentencepiece/sentencepiece.bpe.model
-langs=java,python,en_XX
-
 while getopts ":h" option; do
     case $option in
         h) # display help
@@ -19,13 +14,28 @@ while getopts ":h" option; do
     esac
 done
 
-export CUDA_VISIBLE_DEVICES=$1
+GPU=$1
+MODEL_SIZE=${2:-base}
 
 PATH_2_DATA=${HOME_DIR}/data/codeXglue/code-to-code/defect_prediction/processed
+
+if [[ $MODEL_SIZE == "base" ]]; then
+    PRETRAINED_MODEL_NAME=checkpoint_11_100000.pt
+    ARCH=mbart_base
+else
+    PRETRAINED_MODEL_NAME=plbart_large.pt
+    ARCH=mbart_large
+fi
+
+PRETRAIN=${HOME_DIR}/pretrain/${PRETRAINED_MODEL_NAME}
+SPM_MODEL=${HOME_DIR}/sentencepiece/sentencepiece.bpe.model
+langs=java,python,en_XX
 
 SAVE_DIR=${CURRENT_DIR}/devign
 mkdir -p ${SAVE_DIR}
 USER_DIR=${HOME_DIR}/source
+
+export CUDA_VISIBLE_DEVICES=$GPU
 
 
 function fine_tune () {
@@ -55,7 +65,7 @@ fairseq-train $PATH_2_DATA/data-bin \
     --reset-meters \
     --required-batch-size-multiple 1 \
     --init-token 0 \
-    --arch mbart_base \
+    --arch $ARCH \
     --criterion sentence_prediction \
     --num-classes $NUM_CLASSES \
     --dropout 0.1 \
@@ -72,7 +82,6 @@ fairseq-train $PATH_2_DATA/data-bin \
     --batch-size $MAX_SENTENCES \
     --max-epoch 5 \
     --max-update $MAX_UPDATES \
-    --max-tokens 2048 \
     --seed 1234 \
     --log-format json \
     --log-interval 10 \

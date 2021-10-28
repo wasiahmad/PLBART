@@ -4,6 +4,11 @@ export PYTHONIOENCODING=utf-8;
 CURRENT_DIR=`pwd`
 HOME_DIR=`realpath ../..`;
 
+PRETRAINED_MODEL_NAME=checkpoint_356_100000.pt
+PRETRAIN=${HOME_DIR}/pretrain/${PRETRAINED_MODEL_NAME}
+SPM_MODEL=${HOME_DIR}/sentencepiece/sentencepiece.bpe.model
+langs=java,python,en_XX,javascript,php,ruby,go
+
 while getopts ":h" option; do
     case $option in
         h) # display help
@@ -16,28 +21,15 @@ while getopts ":h" option; do
     esac
 done
 
-GPU=$1
-SOURCE=$2
-MODEL_SIZE=${3:-base}
+export CUDA_VISIBLE_DEVICES=$1
 
+SOURCE=$2
 TARGET=en_XX
 PATH_2_DATA=${HOME_DIR}/data/codeXglue/code-to-text/${SOURCE}
 
-if [[ $MODEL_SIZE == "base" ]]; then
-    PRETRAINED_MODEL_NAME=checkpoint_11_100000.pt
-    ARCH=mbart_base
-else
-    PRETRAINED_MODEL_NAME=plbart_large.pt
-    ARCH=mbart_large
-fi
-
-PRETRAIN=${HOME_DIR}/pretrain/${PRETRAINED_MODEL_NAME}
-SPM_MODEL=${HOME_DIR}/sentencepiece/sentencepiece.bpe.model
-langs=java,python,en_XX
-
 echo "Source: $SOURCE Target: $TARGET"
 
-SAVE_DIR=${CURRENT_DIR}/${MODEL_SIZE}_${SOURCE}_${TARGET}
+SAVE_DIR=${CURRENT_DIR}/code_to_text/${SOURCE}_${TARGET}
 mkdir -p ${SAVE_DIR}
 
 if [[ "$SOURCE" =~ ^(ruby|javascript|go|php)$ ]]; then
@@ -48,8 +40,6 @@ else
     TASK=translation_from_pretrained_bart
 fi
 
-export CUDA_VISIBLE_DEVICES=$GPU
-
 
 function fine_tune () {
 
@@ -59,7 +49,7 @@ fairseq-train $PATH_2_DATA/data-bin $USER_DIR \
     --bpe 'sentencepiece' \
     --sentencepiece-model $SPM_MODEL \
     --langs $langs \
-    --arch $ARCH \
+    --arch mbart_base \
     --layernorm-embedding \
     --task $TASK \
     --source-lang $SOURCE \

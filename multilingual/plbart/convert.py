@@ -47,9 +47,6 @@ def convert(input_ckpt, out_dir, outfile):
 
 
 def sanity_check(model_name_or_path, checkpoint_file):
-    #########################################################
-    # we may do a sanity check
-
     from fairseq.models.bart import BARTModel
 
     bart = BARTModel.from_pretrained(
@@ -71,7 +68,7 @@ def sanity_check(model_name_or_path, checkpoint_file):
     assert bart.task.source_dictionary[50001] == '__java__'
     assert bart.task.source_dictionary[50002] == '__python__'
     assert bart.task.source_dictionary[50003] == '__en_XX__'
-    assert bart.task.source_dictionary[50004] == '__js__'
+    assert bart.task.source_dictionary[50004] == '__javascript__'
     assert bart.task.source_dictionary[50005] == '__php__'
     assert bart.task.source_dictionary[50006] == '__ruby__'
     assert bart.task.source_dictionary[50007] == '__go__'

@@ -20,7 +20,7 @@ rm -rf fairseq
 git clone https://github.com/pytorch/fairseq
 cd fairseq
 git checkout 698e3b91ffa832c286c48035bdff78238b0de8ae
-pip install .
+pip install --editable .
 cd ..
 # install apex
 git clone https://github.com/NVIDIA/apex

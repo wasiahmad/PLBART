@@ -2,83 +2,77 @@
 
 export PYTHONIOENCODING=utf-8;
 CURRENT_DIR=`pwd`
-HOME_DIR=`realpath ../../..`;
+HOME_DIR=`realpath ../..`;
 
-declare -A LANG_MAP
-LANG_MAP['java']='java'
-LANG_MAP['cs']='c_sharp'
+PRETRAINED_MODEL_NAME=checkpoint_356_100000.pt
+PRETRAIN=${HOME_DIR}/pretrain/${PRETRAINED_MODEL_NAME}
+SPM_MODEL=${HOME_DIR}/sentencepiece/sentencepiece.bpe.model
+langs=java,python,en_XX,javascript,php,ruby,go
 
 while getopts ":h" option; do
     case $option in
         h) # display help
             echo
-            echo "Syntax: bash run.sh GPU_ID SRC_LANG TGT_LANG"
-            echo "SRC_LANG/TGT_LANG  Language choices: [$(IFS=\| ; echo "${!LANG_MAP[@]}")]"
+            echo "Syntax: bash run.sh GPU_ID DATA_SIZE"
+            echo
+            echo "DATA_SIZE: small, medium"
             echo
             exit;;
     esac
 done
 
-GPU=$1
-SOURCE=$2
-TARGET=$3
-MODEL_SIZE=${4:-base}
+export CUDA_VISIBLE_DEVICES=$1
+DATA_SIZE=$2
 
-PATH_2_DATA=${HOME_DIR}/data/codeXglue/code-to-code/translation
+SOURCE=source
+TARGET=target
+
+PATH_2_DATA=${HOME_DIR}/data/codeXglue/code-to-code/refinement/${DATA_SIZE}
 CB_EVAL_SCRIPT=${HOME_DIR}/evaluation/CodeBLEU/calc_code_bleu.py
-
-if [[ $MODEL_SIZE == "base" ]]; then
-    PRETRAINED_MODEL_NAME=checkpoint_11_100000.pt
-    ARCH=mbart_base
-else
-    PRETRAINED_MODEL_NAME=plbart_large.pt
-    ARCH=mbart_large
-fi
-
-PRETRAIN=${HOME_DIR}/pretrain/${PRETRAINED_MODEL_NAME}
-SPM_MODEL=${HOME_DIR}/sentencepiece/sentencepiece.bpe.model
-langs=java,python,en_XX
 
 echo "Source: $SOURCE Target: $TARGET"
 
-SAVE_DIR=${CURRENT_DIR}/${SOURCE}_${TARGET}
+SAVE_DIR=${CURRENT_DIR}/code_to_code/refinement/${DATA_SIZE}
 mkdir -p ${SAVE_DIR}
 USER_DIR=${HOME_DIR}/source
 
-export CUDA_VISIBLE_DEVICES=$GPU
+if [[ $DATA_SIZE == 'small' ]]; then
+    BATCH_SIZE=16; UPDATE_FREQ=1;
+else
+    BATCH_SIZE=8; UPDATE_FREQ=2;
+fi
 
 
 function fine_tune () {
 
 OUTPUT_FILE=${SAVE_DIR}/finetune.log
 
-# we have 10.3k train examples, use a batch size of 16 gives us 644 steps
-# we run for a maximum of 50 epochs
+# approx. 50k train examples, use a batch size of 16 gives us 3000 steps
+# we run for a maximum of 30 epochs
 # setting the batch size to 8 with update-freq to 2
-# performing validation at every 500 steps, saving the last 10 checkpoints
+# performing validation at every 2000 steps, saving the last 10 checkpoints
 
 fairseq-train $PATH_2_DATA/data-bin \
     --user-dir $USER_DIR \
+    --truncate-source \
     --langs $langs \
     --task translation_without_lang_token \
-    --arch $ARCH \
+    --arch mbart_base \
     --layernorm-embedding \
-    --truncate-source \
     --source-lang $SOURCE \
     --target-lang $TARGET \
     --criterion label_smoothed_cross_entropy \
     --label-smoothing 0.1 \
-    --batch-size 4 \
-    --update-freq 4 \
+    --batch-size $BATCH_SIZE \
+    --update-freq $UPDATE_FREQ \
     --max-epoch 30 \
     --optimizer adam \
     --adam-eps 1e-06 \
     --adam-betas '(0.9, 0.98)' \
     --lr-scheduler polynomial_decay \
-    --lr 5e-05 \
-    --min-lr -1 \
-    --warmup-updates 1000 \
-    --max-update 50000 \
+    --lr 5e-05 --min-lr -1 \
+    --warmup-updates 500 \
+    --max-update 100000 \
     --dropout 0.1 \
     --attention-dropout 0.1 \
     --weight-decay 0.0 \
@@ -111,7 +105,7 @@ function generate () {
 model=${SAVE_DIR}/checkpoint_best.pt
 FILE_PREF=${SAVE_DIR}/output
 RESULT_FILE=${SAVE_DIR}/result.txt
-GOUND_TRUTH_PATH=$PATH_2_DATA/test.java-cs.txt.${TARGET}
+GOUND_TRUTH_PATH=$PATH_2_DATA/test.buggy-fixed.fixed
 
 fairseq-generate $PATH_2_DATA/data-bin \
     --user-dir $USER_DIR \
@@ -140,7 +134,7 @@ export PYTHONPATH=${HOME_DIR};
 python $CB_EVAL_SCRIPT \
     --refs $GOUND_TRUTH_PATH \
     --hyp $FILE_PREF.hyp \
-    --lang ${LANG_MAP[$TARGET]} \
+    --lang java \
     2>&1 | tee -a ${RESULT_FILE};
 
 }

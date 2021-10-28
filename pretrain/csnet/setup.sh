@@ -51,5 +51,29 @@ done
 
 }
 
+
+function split () {
+
+NUM_SPLIT=$1
+for lang in java python javascript php go ruby; do
+    PREFIX=$OUT_DIR/$lang/train
+    if [[ -f $PREFIX.functions.tok ]]; then
+        for ((i=0;i<$NUM_SPLIT;i++)); do
+            awk "NR % $NUM_SPLIT == $i" $PREFIX.functions.tok > $PREFIX.$i.functions.tok
+        done
+    fi
+done
+
+PREFIX=$OUT_DIR/en_XX/train
+if [[ -f $PREFIX.docstring.tok ]]; then
+    for ((i=0;i<$NUM_SPLIT;i++)); do
+        awk "NR % $NUM_SPLIT == $i" $PREFIX.docstring.tok > $PREFIX.$i.docstring.tok
+    done
+fi
+
+}
+
+
 download
 prepare
+split 4

@@ -2,74 +2,55 @@
 
 export PYTHONIOENCODING=utf-8;
 CURRENT_DIR=`pwd`
-HOME_DIR=`realpath ../../..`;
+HOME_DIR=`realpath ../..`;
 
-declare -A LANG_MAP
-LANG_MAP['java']='java'
-LANG_MAP['cs']='c_sharp'
+PRETRAINED_MODEL_NAME=checkpoint_356_100000.pt
+PRETRAIN=${HOME_DIR}/pretrain/${PRETRAINED_MODEL_NAME}
+SPM_MODEL=${HOME_DIR}/sentencepiece/sentencepiece.bpe.model
+langs=java,python,en_XX,javascript,php,ruby,go
 
 while getopts ":h" option; do
     case $option in
         h) # display help
             echo
-            echo "Syntax: bash run.sh GPU_ID SRC_LANG TGT_LANG"
-            echo "SRC_LANG/TGT_LANG  Language choices: [$(IFS=\| ; echo "${!LANG_MAP[@]}")]"
+            echo "Syntax: bash run.sh GPU_ID"
             echo
             exit;;
     esac
 done
 
-GPU=$1
-SOURCE=$2
-TARGET=$3
-MODEL_SIZE=${4:-base}
+export CUDA_VISIBLE_DEVICES=$1
 
-PATH_2_DATA=${HOME_DIR}/data/codeXglue/code-to-code/translation
+SOURCE=en_XX
+TARGET=java
+PATH_2_DATA=${HOME_DIR}/data/codeXglue/text-to-code/concode
+EVAL_SCRIPT=${HOME_DIR}/scripts/text_to_code/evaluator.py
 CB_EVAL_SCRIPT=${HOME_DIR}/evaluation/CodeBLEU/calc_code_bleu.py
-
-if [[ $MODEL_SIZE == "base" ]]; then
-    PRETRAINED_MODEL_NAME=checkpoint_11_100000.pt
-    ARCH=mbart_base
-else
-    PRETRAINED_MODEL_NAME=plbart_large.pt
-    ARCH=mbart_large
-fi
-
-PRETRAIN=${HOME_DIR}/pretrain/${PRETRAINED_MODEL_NAME}
-SPM_MODEL=${HOME_DIR}/sentencepiece/sentencepiece.bpe.model
-langs=java,python,en_XX
 
 echo "Source: $SOURCE Target: $TARGET"
 
-SAVE_DIR=${CURRENT_DIR}/${SOURCE}_${TARGET}
+SAVE_DIR=${CURRENT_DIR}/text_to_code/concode
 mkdir -p ${SAVE_DIR}
-USER_DIR=${HOME_DIR}/source
-
-export CUDA_VISIBLE_DEVICES=$GPU
 
 
 function fine_tune () {
 
 OUTPUT_FILE=${SAVE_DIR}/finetune.log
 
-# we have 10.3k train examples, use a batch size of 16 gives us 644 steps
-# we run for a maximum of 50 epochs
-# setting the batch size to 8 with update-freq to 2
-# performing validation at every 500 steps, saving the last 10 checkpoints
-
 fairseq-train $PATH_2_DATA/data-bin \
-    --user-dir $USER_DIR \
+    --restore-file $PRETRAIN \
+    --bpe 'sentencepiece' \
+    --sentencepiece-model $SPM_MODEL \
     --langs $langs \
-    --task translation_without_lang_token \
-    --arch $ARCH \
+    --arch mbart_base \
     --layernorm-embedding \
-    --truncate-source \
+    --task translation_from_pretrained_bart \
     --source-lang $SOURCE \
     --target-lang $TARGET \
     --criterion label_smoothed_cross_entropy \
-    --label-smoothing 0.1 \
-    --batch-size 4 \
-    --update-freq 4 \
+    --label-smoothing 0.2 \
+    --batch-size 8 \
+    --update-freq 3 \
     --max-epoch 30 \
     --optimizer adam \
     --adam-eps 1e-06 \
@@ -78,17 +59,16 @@ fairseq-train $PATH_2_DATA/data-bin \
     --lr 5e-05 \
     --min-lr -1 \
     --warmup-updates 1000 \
-    --max-update 50000 \
+    --max-update 200000 \
     --dropout 0.1 \
     --attention-dropout 0.1 \
-    --weight-decay 0.0 \
+    --weight-decay 0.01 \
     --seed 1234 \
     --log-format json \
     --log-interval 100 \
-    --restore-file $PRETRAIN \
-    --reset-dataloader \
     --reset-optimizer \
     --reset-meters \
+    --reset-dataloader \
     --reset-lr-scheduler \
     --eval-bleu \
     --eval-bleu-detok space \
@@ -111,36 +91,35 @@ function generate () {
 model=${SAVE_DIR}/checkpoint_best.pt
 FILE_PREF=${SAVE_DIR}/output
 RESULT_FILE=${SAVE_DIR}/result.txt
-GOUND_TRUTH_PATH=$PATH_2_DATA/test.java-cs.txt.${TARGET}
+GOUND_TRUTH_PATH=$PATH_2_DATA/test.json
 
 fairseq-generate $PATH_2_DATA/data-bin \
-    --user-dir $USER_DIR \
     --path $model \
-    --truncate-source \
-    --task translation_without_lang_token \
+    --task translation_from_pretrained_bart \
     --gen-subset test \
     -t $TARGET -s $SOURCE \
     --sacrebleu \
     --remove-bpe 'sentencepiece' \
-    --max-len-b 200 \
-    --beam 5 \
     --batch-size 4 \
-    --langs $langs > $FILE_PREF
+    --langs $langs \
+    --beam 10 \
+    --lenpen 1.0 > $FILE_PREF
 
-cat $FILE_PREF | grep -P "^H" |sort -V |cut -f 3- | sed 's/\[${TARGET}\]//g' > $FILE_PREF.hyp
+cat $FILE_PREF | grep -P "^H" |sort -V |cut -f 3- | sed 's/\[${TARGET}\]//g' > $FILE_PREF.hyp;
 
 echo "CodeXGlue Evaluation" > ${RESULT_FILE}
-python ${HOME_DIR}/evaluation/bleu.py \
-    --ref $GOUND_TRUTH_PATH \
-    --pre $FILE_PREF.hyp \
+python $EVAL_SCRIPT \
+    --expected $GOUND_TRUTH_PATH \
+    --predicted $FILE_PREF.hyp \
     2>&1 | tee -a ${RESULT_FILE};
 
 echo "CodeBLEU Evaluation" >> ${RESULT_FILE}
 export PYTHONPATH=${HOME_DIR};
 python $CB_EVAL_SCRIPT \
-    --refs $GOUND_TRUTH_PATH \
     --hyp $FILE_PREF.hyp \
-    --lang ${LANG_MAP[$TARGET]} \
+    --refs $GOUND_TRUTH_PATH \
+    --json_refs \
+    --lang $TARGET \
     2>&1 | tee -a ${RESULT_FILE};
 
 }

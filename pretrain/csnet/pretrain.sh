@@ -7,7 +7,13 @@ DATA_HOME=${CURRENT_DIR}/data
 SPM_MODEL=${HOME_DIR}/sentencepiece/sentencepiece.bpe.model
 langs=java,python,en_XX,javascript,php,ruby,go
 
-DATA_DIR=${DATA_HOME}/shard
+DATA_DIR=""
+for (( idx=0; idx<=3; idx++ )); do
+    DATA_DIR+="${DATA_HOME}/shards/shard${idx}"
+    if [[ $idx < 3 ]]; then
+        DATA_DIR+=":"
+    fi
+done
 
 SAVE_DIR=${CURRENT_DIR}/checkpoints
 mkdir -p $SAVE_DIR

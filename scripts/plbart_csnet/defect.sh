@@ -2,7 +2,12 @@
 
 export PYTHONIOENCODING=utf-8;
 CURRENT_DIR=`pwd`
-HOME_DIR=`realpath ../../..`;
+HOME_DIR=`realpath ../..`;
+
+PRETRAINED_MODEL_NAME=checkpoint_356_100000.pt
+PRETRAIN=${HOME_DIR}/pretrain/${PRETRAINED_MODEL_NAME}
+SPM_MODEL=${HOME_DIR}/sentencepiece/sentencepiece.bpe.model
+langs=java,python,en_XX,javascript,php,ruby,go
 
 while getopts ":h" option; do
     case $option in
@@ -14,36 +19,22 @@ while getopts ":h" option; do
     esac
 done
 
-GPU=$1
-MODEL_SIZE=${2:-base}
+export CUDA_VISIBLE_DEVICES=$1
 
-PATH_2_DATA=${HOME_DIR}/data/codeXglue/code-to-code/clone_detection/processed
+PATH_2_DATA=${HOME_DIR}/data/codeXglue/code-to-code/defect_prediction/processed
+EVAL_SCRIPT=${HOME_DIR}/scripts/code_to_code/clone_detection/evaluator.py
 
-if [[ $MODEL_SIZE == "base" ]]; then
-    PRETRAINED_MODEL_NAME=checkpoint_11_100000.pt
-    ARCH=mbart_base
-else
-    PRETRAINED_MODEL_NAME=plbart_large.pt
-    ARCH=mbart_large
-fi
-
-PRETRAIN=${HOME_DIR}/pretrain/${PRETRAINED_MODEL_NAME}
-SPM_MODEL=${HOME_DIR}/sentencepiece/sentencepiece.bpe.model
-langs=java,python,en_XX
-
-SAVE_DIR=${CURRENT_DIR}/big_clone_bench
+SAVE_DIR=${CURRENT_DIR}/code_to_code/defect
 mkdir -p ${SAVE_DIR}
 USER_DIR=${HOME_DIR}/source
-
-export CUDA_VISIBLE_DEVICES=$GPU
 
 
 function fine_tune () {
 
 OUTPUT_FILE=${SAVE_DIR}/finetune.log
 
-MAX_UPDATES=62500       # 10 epochs through 100k examples with bsz 16
-WARMUP_UPDATES=1000     # 6 percent of the number of updates
+MAX_UPDATES=15000       # 10 epochs through 100k examples with bsz 16
+WARMUP_UPDATES=500      # 6 percent of the number of updates
 LR=5e-5                 # Peak LR for polynomial LR scheduler.
 NUM_CLASSES=2
 MAX_SENTENCES=4         # Batch size.
@@ -65,7 +56,7 @@ fairseq-train $PATH_2_DATA/data-bin \
     --reset-meters \
     --required-batch-size-multiple 1 \
     --init-token 0 \
-    --arch $ARCH \
+    --arch mbart_base \
     --criterion sentence_prediction \
     --num-classes $NUM_CLASSES \
     --dropout 0.1 \
@@ -80,7 +71,7 @@ fairseq-train $PATH_2_DATA/data-bin \
     --warmup-updates $WARMUP_UPDATES \
     --update-freq $UPDATE_FREQ \
     --batch-size $MAX_SENTENCES \
-    --max-epoch 3 \
+    --max-epoch 5 \
     --max-update $MAX_UPDATES \
     --seed 1234 \
     --log-format json \
@@ -99,7 +90,7 @@ fairseq-train $PATH_2_DATA/data-bin \
 function generate () {
 
 RESULT_FILE=${SAVE_DIR}/result.txt
-python evaluator.py \
+python $EVAL_SCRIPT \
     --user_dir $USER_DIR \
     --model_dir $SAVE_DIR \
     --model_name checkpoint_best.pt \

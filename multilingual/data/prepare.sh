@@ -12,7 +12,7 @@ function spm_preprocess () {
 
 LANG=$1
 for SPLIT in train valid test; do
-    if [[ ! -f $DATA_DIR/${SPLIT}.$LANG-en.spm.$LANG ]]; then
+    if [[ ! -f $DATA_DIR/${SPLIT}.$LANG-$LANG_EN.spm.$LANG ]]; then
         python encode.py \
             --model_file ${SPM_DIR}/sentencepiece.bpe.model \
             --input_source $DATA_DIR/${SPLIT}.$LANG-$LANG_EN.$LANG \

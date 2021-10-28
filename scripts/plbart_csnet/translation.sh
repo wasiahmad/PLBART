@@ -2,7 +2,12 @@
 
 export PYTHONIOENCODING=utf-8;
 CURRENT_DIR=`pwd`
-HOME_DIR=`realpath ../../..`;
+HOME_DIR=`realpath ../..`;
+
+PRETRAINED_MODEL_NAME=checkpoint_356_100000.pt
+PRETRAIN=${HOME_DIR}/pretrain/${PRETRAINED_MODEL_NAME}
+SPM_MODEL=${HOME_DIR}/sentencepiece/sentencepiece.bpe.model
+langs=java,python,en_XX,javascript,php,ruby,go
 
 declare -A LANG_MAP
 LANG_MAP['java']='java'
@@ -19,33 +24,19 @@ while getopts ":h" option; do
     esac
 done
 
-GPU=$1
+export CUDA_VISIBLE_DEVICES=$1
+
 SOURCE=$2
 TARGET=$3
-MODEL_SIZE=${4:-base}
 
 PATH_2_DATA=${HOME_DIR}/data/codeXglue/code-to-code/translation
 CB_EVAL_SCRIPT=${HOME_DIR}/evaluation/CodeBLEU/calc_code_bleu.py
 
-if [[ $MODEL_SIZE == "base" ]]; then
-    PRETRAINED_MODEL_NAME=checkpoint_11_100000.pt
-    ARCH=mbart_base
-else
-    PRETRAINED_MODEL_NAME=plbart_large.pt
-    ARCH=mbart_large
-fi
-
-PRETRAIN=${HOME_DIR}/pretrain/${PRETRAINED_MODEL_NAME}
-SPM_MODEL=${HOME_DIR}/sentencepiece/sentencepiece.bpe.model
-langs=java,python,en_XX
-
 echo "Source: $SOURCE Target: $TARGET"
 
-SAVE_DIR=${CURRENT_DIR}/${SOURCE}_${TARGET}
+SAVE_DIR=${CURRENT_DIR}/code_to_code/translation/${SOURCE}_${TARGET}
 mkdir -p ${SAVE_DIR}
 USER_DIR=${HOME_DIR}/source
-
-export CUDA_VISIBLE_DEVICES=$GPU
 
 
 function fine_tune () {
@@ -61,7 +52,7 @@ fairseq-train $PATH_2_DATA/data-bin \
     --user-dir $USER_DIR \
     --langs $langs \
     --task translation_without_lang_token \
-    --arch $ARCH \
+    --arch mbart_base \
     --layernorm-embedding \
     --truncate-source \
     --source-lang $SOURCE \

@@ -20,11 +20,10 @@ def main():
     parser.add_argument('--predictions', required=True,
                         help="filename of the leaderboard predictions, in txt format.")
     parser.add_argument('--lang', type=str, required=True, help='name of the programming language',
-                        choices=['java', 'js', 'php', 'go', 'python', 'ruby'])
+                        choices=['java', 'javascript', 'php', 'go', 'python', 'ruby'])
     parser.add_argument('--detokenize', action='store_true',
                         help="detokenize both predictions and reference code.")
     args = parser.parse_args()
-    args.lang = 'javascript' if args.lang == 'js' else args.lang
 
     refs = [x.strip() for x in open(args.references, 'r', encoding='utf-8').readlines()]
     preds = [x.strip() for x in open(args.predictions, 'r', encoding='utf-8').readlines()]
