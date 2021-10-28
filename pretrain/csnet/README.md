@@ -124,7 +124,7 @@ Task: [Translation](https://github.com/microsoft/CodeXGLUE/tree/main/Code-Code/c
 Task: [Defect Detection](https://github.com/microsoft/CodeXGLUE/tree/main/Code-Code/Defect-detection), 
 [Clone Detection](https://github.com/microsoft/CodeXGLUE/tree/main/Code-Code/Clone-detection-BigCloneBench)
 
-|                   | Vulnerability Detection | Clone Detection | 
+|                   | Vulnerability <br/> Detection | Clone <br/> Detection | 
 | -------------     | :---------------------: | :-------------: |
 | CodeBERT          | 62.08                   | 96.5            |
 | GraphCodeBERT     | -                       | 97.1            |

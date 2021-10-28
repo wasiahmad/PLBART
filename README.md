@@ -5,9 +5,12 @@ We present **PLBART** that is pre-trained on a large collection Java and Python 
 
 We present the file structure of this repository [here](https://github.com/wasiahmad/PLBART/blob/main/FILEs.md).
 
+**We maintain a [spreadsheet](https://docs.google.com/spreadsheets/d/18qfy-zUgXDKcXqR9NB0HsLRdYAmMQZdVSbcJ6M3JKs8) 
+to record PLBART's performances on the downstream tasks reported in the paper and published checkpoints.**
+
 ### What's New:
 
-- October 2021 - [Released PLBART checkpoints pre-trained on CodeSearchNet]((https://github.com/wasiahmad/PLBART/blob/main/pretrain/csnet/README.md))
+- October 2021 - [Released PLBART checkpoints pre-trained on CodeSearchNet](https://github.com/wasiahmad/PLBART/blob/main/pretrain/csnet/README.md)
 - August 2021 - [Multilingual multi-task learning using PLBART](https://github.com/wasiahmad/PLBART/blob/main/multilingual/README.md)
 - July 2021 - Released PLBART checkpoints fine-tuned on downstream tasks
 - June 2021 - Official code release
@@ -61,9 +64,6 @@ we set `UPDATE_FREQ` to 60, so that we can achieve an effective batch size of ~2
 
 
 ### Fine-tuning on Downstream Tasks
-
-**We maintain a [spreadsheet](https://docs.google.com/spreadsheets/d/18qfy-zUgXDKcXqR9NB0HsLRdYAmMQZdVSbcJ6M3JKs8) 
-to record PLBART's performances on the downstream tasks reported in the paper and published checkpoints.**
 
 We fine-tune and evaluate PLBART on three types of tasks.
 
