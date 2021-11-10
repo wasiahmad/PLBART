@@ -5,7 +5,7 @@ import numpy as np
 
 
 def convert(input_ckpt, out_dir, outfile):
-    # input_ckpt = '../../pretrain/checkpoint_11_100000.pt'
+    # input_ckpt = '../../pretrain/plbart_base.pt'
     model = torch.load(input_ckpt)
     # model keys - dict_keys(['args', 'model', 'optimizer_history', 'extra_state', 'last_optimizer_state'])
 
@@ -80,7 +80,7 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         '--input_ckpt',
-        default='../../pretrain/checkpoint_11_100000.pt',
+        default='../../pretrain/plbart_base.pt',
         help="input checkpoint file."
     )
     parser.add_argument(
@@ -90,7 +90,7 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         '--output_ckpt',
-        default='multilingual_plbart.pt',
+        default='plbart_base_multilingual.pt',
         help="output checkpoint file."
     )
     args = parser.parse_args()

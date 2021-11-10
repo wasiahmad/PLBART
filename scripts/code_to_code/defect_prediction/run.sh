@@ -16,17 +16,10 @@ done
 
 GPU=$1
 MODEL_SIZE=${2:-base}
-
 PATH_2_DATA=${HOME_DIR}/data/codeXglue/code-to-code/defect_prediction/processed
 
-if [[ $MODEL_SIZE == "base" ]]; then
-    PRETRAINED_MODEL_NAME=checkpoint_11_100000.pt
-    ARCH=mbart_base
-else
-    PRETRAINED_MODEL_NAME=plbart_large.pt
-    ARCH=mbart_large
-fi
-
+ARCH=mbart_${MODEL_SIZE}
+PRETRAINED_MODEL_NAME=plbart_${MODEL_SIZE}.pt
 PRETRAIN=${HOME_DIR}/pretrain/${PRETRAINED_MODEL_NAME}
 SPM_MODEL=${HOME_DIR}/sentencepiece/sentencepiece.bpe.model
 langs=java,python,en_XX
@@ -42,11 +35,11 @@ function fine_tune () {
 
 OUTPUT_FILE=${SAVE_DIR}/finetune.log
 
-MAX_UPDATES=15000       # 10 epochs through 100k examples with bsz 16
+MAX_UPDATES=15000       # ~11 epochs through 21,854 examples with bsz 16
 WARMUP_UPDATES=500      # 6 percent of the number of updates
 LR=5e-5                 # Peak LR for polynomial LR scheduler.
 NUM_CLASSES=2
-MAX_SENTENCES=4         # Batch size.
+MAX_SENTENCES=4         # Batch size 16.
 UPDATE_FREQ=4
 
 fairseq-train $PATH_2_DATA/data-bin \
@@ -80,7 +73,7 @@ fairseq-train $PATH_2_DATA/data-bin \
     --warmup-updates $WARMUP_UPDATES \
     --update-freq $UPDATE_FREQ \
     --batch-size $MAX_SENTENCES \
-    --max-epoch 5 \
+    --max-epoch 10 \
     --max-update $MAX_UPDATES \
     --seed 1234 \
     --log-format json \

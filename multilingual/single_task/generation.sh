@@ -33,7 +33,7 @@ fi
 lang_dict="$HOME_DIR/multilingual/plbart/lang_dict.txt";
 USER_DIR="$HOME_DIR/source";
 PATH_2_DATA=${HOME_DIR}/multilingual/data/processed;
-PRETRAIN=${HOME_DIR}/multilingual/plbart/multilingual_plbart.pt;
+PRETRAIN=${HOME_DIR}/multilingual/plbart/plbart_base_multilingual.pt;
 SAVE_DIR=${CURRENT_DIR}/${LANGUAGE_GROUP};
 mkdir -p $SAVE_DIR;
 

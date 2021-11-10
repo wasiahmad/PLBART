@@ -23,19 +23,11 @@ MODEL_SIZE=${3:-base}
 TARGET=en_XX
 PATH_2_DATA=${HOME_DIR}/data/codeXglue/code-to-text/${SOURCE}
 
-if [[ $MODEL_SIZE == "base" ]]; then
-    PRETRAINED_MODEL_NAME=checkpoint_11_100000.pt
-    ARCH=mbart_base
-else
-    PRETRAINED_MODEL_NAME=plbart_large.pt
-    ARCH=mbart_large
-fi
-
+ARCH=mbart_${MODEL_SIZE}
+PRETRAINED_MODEL_NAME=plbart_${MODEL_SIZE}.pt
 PRETRAIN=${HOME_DIR}/pretrain/${PRETRAINED_MODEL_NAME}
 SPM_MODEL=${HOME_DIR}/sentencepiece/sentencepiece.bpe.model
 langs=java,python,en_XX
-
-echo "Source: $SOURCE Target: $TARGET"
 
 SAVE_DIR=${CURRENT_DIR}/${MODEL_SIZE}_${SOURCE}_${TARGET}
 mkdir -p ${SAVE_DIR}
@@ -94,7 +86,6 @@ fairseq-train $PATH_2_DATA/data-bin $USER_DIR \
     --eval-bleu-args '{"beam": 5}' \
     --best-checkpoint-metric bleu \
     --maximize-best-checkpoint-metric \
-    --eval-bleu-print-samples \
     --no-epoch-checkpoints \
     --patience 5 \
     --ddp-backend no_c10d \

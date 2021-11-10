@@ -133,4 +133,3 @@ dmypy.json
 .idea/*
 *.pyc
 */__pycache__/*
-eval_apps

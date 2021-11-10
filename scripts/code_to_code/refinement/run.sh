@@ -26,19 +26,11 @@ TARGET=target
 PATH_2_DATA=${HOME_DIR}/data/codeXglue/code-to-code/refinement/${DATA_SIZE}
 CB_EVAL_SCRIPT=${HOME_DIR}/evaluation/CodeBLEU/calc_code_bleu.py
 
-if [[ $MODEL_SIZE == "base" ]]; then
-    PRETRAINED_MODEL_NAME=checkpoint_11_100000.pt
-    ARCH=mbart_base
-else
-    PRETRAINED_MODEL_NAME=plbart_large.pt
-    ARCH=mbart_large
-fi
-
+ARCH=mbart_${MODEL_SIZE}
+PRETRAINED_MODEL_NAME=plbart_${MODEL_SIZE}.pt
 PRETRAIN=${HOME_DIR}/pretrain/${PRETRAINED_MODEL_NAME}
 SPM_MODEL=${HOME_DIR}/sentencepiece/sentencepiece.bpe.model
 langs=java,python,en_XX
-
-echo "Source: $SOURCE Target: $TARGET"
 
 SAVE_DIR=${CURRENT_DIR}/${DATA_SIZE}
 mkdir -p ${SAVE_DIR}
@@ -67,7 +59,7 @@ fairseq-train $PATH_2_DATA/data-bin \
     --truncate-source \
     --langs $langs \
     --task translation_without_lang_token \
-    --arch mbart_base \
+    --arch $ARCH \
     --layernorm-embedding \
     --source-lang $SOURCE \
     --target-lang $TARGET \

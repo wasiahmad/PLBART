@@ -1,47 +1,102 @@
-# PLBART
+<div align="center">
+
+<h1>PLBART</h1>
 
 Official code release of our NAACL 2021 work, [Unified Pre-training for Program Understanding and Generation](https://www.aclweb.org/anthology/2021.naacl-main.211/). 
-We present **PLBART** that is pre-trained on a large collection Java and Python functions and natural language descriptions collected from Github and StackOverflow, respectively.
 
-We present the file structure of this repository [here](https://github.com/wasiahmad/PLBART/blob/main/FILEs.md).
+**\*\*\*\*\* PLBART's performances on the downstream tasks are recored in this 
+[spreadsheet](https://docs.google.com/spreadsheets/d/18qfy-zUgXDKcXqR9NB0HsLRdYAmMQZdVSbcJ6M3JKs8). \*\*\*\*\***
 
-**We maintain a [spreadsheet](https://docs.google.com/spreadsheets/d/18qfy-zUgXDKcXqR9NB0HsLRdYAmMQZdVSbcJ6M3JKs8) 
-to record PLBART's performances on the downstream tasks reported in the paper and published checkpoints.**
+<p align="center">
+  <a href="#news">News</a> •
+  <a href="#setup">Setup</a> •
+  <a href="#pre-training">Pre-training</a> •
+  <a href="#fine-tuning">Fine-tuning</a> •
+  <a href="#faqs">FAQs</a> •
+  <a href="#acknowledgement">Acknowledgement</a> •
+  <a href="#license">License</a> • 
+  <a href="#citation">Citation</a>
+</p>
 
-### What's New:
+</div>
 
-- October 2021 - [Released PLBART checkpoints pre-trained on CodeSearchNet](https://github.com/wasiahmad/PLBART/blob/main/pretrain/csnet/README.md)
-- August 2021 - [Multilingual multi-task learning using PLBART](https://github.com/wasiahmad/PLBART/blob/main/multilingual/README.md)
-- July 2021 - Released PLBART checkpoints fine-tuned on downstream tasks
-- June 2021 - Official code release
-- March 2021 - Pre-release of source code
+______________________________________________________________________
+
+## PLBART is a Transformer model
+
+- PLBART is a sequence-to-sequence model pre-trained on a large collection Java and Python functions and natural 
+language descriptions collected from Github and StackOverflow, respectively. 
+- PLBART is pre-trained via denoising autoencoding (DAE) and uses three noising strategies: token masking, token deletion, and token infilling (shown below in the three examples).
+
+<div align="center">
+
+<table>
+    <thead>
+        <tr>
+            <th>Noisy Input</th>
+            <th>Original Sequence</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Is 0 the <strong>[MASK]</strong> Fibonacci <strong>[MASK]</strong> ? <em>&lt;En&gt;</em></td>
+            <td><em>&lt;En&gt;</em> Is 0 the <strong>first</strong> Fibonacci <strong>number</strong> ?</td>
+        </tr>
+        <tr>
+            <td>public static main ( String args [ ] ) { date = Date ( ) ; 
+            System . out . ( String . format ( " Current Date : % tc " , ) ) ; } <em>&lt;java&gt;</em></td>
+            <td><em>&lt;java&gt;</em> public static <strong>void</strong> main ( String args [ ] ) { <strong>Date</strong> date = new Date ( ) ; 
+            System . out . <strong>printf</strong> ( String . format ( " Current Date : % tc " , <strong>date</strong> ) ) ; }</td>
+        </tr>
+        <tr>
+            <td>def addThreeNumbers ( x , y , z ) : NEW_LINE INDENT return <strong>[MASK]</strong> <em>&lt;python&gt;</em></td>
+            <td><em>&lt;python&gt;</em> def addThreeNumbers ( x , y , z ) : NEW_LINE INDENT return <strong>x + y + z</strong></td>
+        </tr>
+    </tbody>
+</table>
+
+</div>
+
+______________________________________________________________________
 
 
-### Setup (optional)
+## News
+
+- November 2021: Released PLBART-large (12L-1024H-16A) checkpoint
+- October 2021: [Released PLBART checkpoints pre-trained on CodeSearchNet](https://github.com/wasiahmad/PLBART/blob/main/pretrain/csnet/README.md)
+- August 2021: [Multilingual multi-task learning using PLBART](https://github.com/wasiahmad/PLBART/blob/main/multilingual/README.md)
+- July 2021: Released PLBART checkpoints fine-tuned on downstream tasks
+- June 2021: Official code release
+- March 2021: Pre-release of source code
+
+______________________________________________________________________
+
+
+## Setup
 
 We can setup a conda environment in order to run PLBART experiments, the first step is to download the dependencies. 
-We assume [anaconda](https://www.anaconda.com/) and Python 3.6 is installed. The additional requirements 
-(as noted in [requirements.txt](https://github.com/wasiahmad/PLBART/blob/main/requirements.txt) can be installed by 
+We assume [anaconda](https://www.anaconda.com/) is installed. The additional requirements 
+(noted in [requirements.txt](https://github.com/wasiahmad/PLBART/blob/main/requirements.txt)) can be installed by 
 running the following script:
 
 ```
-bash install_tools.sh
+bash install_env.sh
 ```
 
+______________________________________________________________________
 
-### Pre-training
 
-Install [apex](https://github.com/nvidia/apex#quick-start) for fp16 training. Then, follow the following steps.
+## Pre-training
 
-#### Step1. Download Github data
+### Step1. Download Github data
 
 Go to `data/github` directory and follow instructions.
 
-#### Step2. Download StackOverflow data
+### Step2. Download StackOverflow data
 
 Go to `data/stackoverflow` directory and follow instructions.
 
-#### Step3. Binarize the data and pre-train
+### Step3. Binarize the data and pre-train
 
 ```bash
 cd pretrain
@@ -62,10 +117,11 @@ Note that, `MAX_TOKENS` refers to the size of each mini-batch, in terms of the n
 we noticed that in an 11gb GPU, maximum 2048 tokens can be accommodated which is equivalent to 4-5 examples. Therefore,
 we set `UPDATE_FREQ` to 60, so that we can achieve an effective batch size of ~2048.
 
+______________________________________________________________________
 
-### Fine-tuning on Downstream Tasks
+## Fine-tuning
 
-We fine-tune and evaluate PLBART on three types of tasks.
+We fine-tune and evaluate PLBART on three types of downstream tasks.
 
 <table>
     <thead>
@@ -161,8 +217,11 @@ cd ../..
 
 Note. We fine-tuned PLBART on 1 `GeForce RTX 2080` (11gb) GPU.
 
+______________________________________________________________________
 
-### FAQ / Notes
+## FAQs
+
+__[NOTE] We present the file structure of this repository [here](https://github.com/wasiahmad/PLBART/blob/main/FILEs.md).__
 
 __Mismatch in performance reported in the paper and achieved using the released checkpoints.__
 
@@ -191,13 +250,22 @@ __What can be the maximum input and output lengths for PLBART?__
 
 The maximum length is 512.
 
+______________________________________________________________________
 
-### Acknowledgement
+## Acknowledgement
 
 PLBART uses [Fairseq](https://github.com/pytorch/fairseq), [codeXglue](https://github.com/microsoft/CodeXGLUE), and [TransCoder](https://github.com/facebookresearch/TransCoder) and thanks the authors of these works for their contribution.
 
+______________________________________________________________________
 
-### Citation
+## License
+
+Contents of this repository is under the [MIT license](https://opensource.org/licenses/MIT). The license 
+applies to the pre-trained and fine-tuned models as well.
+
+______________________________________________________________________
+
+## Citation
 
 ```
 @inproceedings{ahmad-etal-2021-unified,

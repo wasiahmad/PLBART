@@ -5,6 +5,7 @@
 
 import logging
 import os
+import torch
 from argparse import Namespace
 
 import numpy as np
