@@ -52,7 +52,7 @@ Dataset: [CodeSearchNet](https://github.com/microsoft/CodeXGLUE/tree/main/Code-T
 
 Dataset: [Concode](https://github.com/microsoft/CodeXGLUE/tree/main/Text-Code/text-to-code)
 
-|                   | EM    | BLEU  | COdeBLEU | 
+|                   | EM    | BLEU  | CodeBLEU | 
 | -------------     | :---: | :---: | :------: |
 | GPT-2             | 17.35 | 25.37 | 29.69   |
 | CodeGPT-2         | 18.25 | 28.69 | 32.71   |
