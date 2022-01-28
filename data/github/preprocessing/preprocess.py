@@ -5,14 +5,22 @@
 # LICENSE file in the root directory of this source tree.
 #
 
+import os
+import sys
 import argparse
 import subprocess
 
 from concurrent.futures import ProcessPoolExecutor
-from data.github.preprocessing.src.dataset import Dataset
-from data.github.preprocessing.src.utils import bool_flag, create_symlink
 from submitit import AutoExecutor
 from pathlib import Path
+
+root_dir = Path(os.path.abspath(__file__)).parents[3]
+sys.path.append(root_dir.absolute().as_posix())
+try:
+    from data.github.preprocessing.src.dataset import Dataset
+    from data.github.preprocessing.src.utils import bool_flag, create_symlink
+except Exception as e:
+    print("Exception: ", e)
 
 
 def check_files_and_symlink_for_XLM(dataset, langs):
@@ -121,7 +129,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('root', help='root folder')
     parser.add_argument('--lang1', help='language 1')
-    parser.add_argument('--lang2', help='language 2')
+    parser.add_argument('--lang2', default=None, help='language 2')
     parser.add_argument('--lang3', default=None, help='language 3')
     parser.add_argument('--test_size', type=int,
                         default=1000, help='size of test set')

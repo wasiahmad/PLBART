@@ -72,160 +72,219 @@ class ind_iter(object):
             raise StopIteration
 
 
-def process_string(tok, char2tok, tok2char, is_comment):
-    if is_comment:
-        tok = re.sub(' +', ' ', tok)
-        tok = re.sub(r"(.)\1\1\1\1+", r"\1\1\1\1\1", tok)
-        if len(re.sub(r'\W', '', tok)) < 2:
-            return ''
-    tok = tok.replace(' ', ' ▁ ')
-    for char, special_token in char2tok.items():
+def replace_tokens(tok, dictionary):
+    for char, special_token in dictionary.items():
         tok = tok.replace(char, special_token)
-    if tok.startswith(' STOKEN0'):
-        if tok.endswith('\n'):
-            tok = tok[:-1]
-        tok += ' ENDCOM'
-    tok = tok.replace('\n', ' STRNEWLINE ')
-    tok = tok.replace('\t', ' TABSYMBOL ')
-    tok = re.sub(' +', ' ', tok)
-    tok = tokenize_v14_international(tok)
-    tok = re.sub(' +', ' ', tok)
-    for special_token, char in tok2char.items():
-        tok = tok.replace(special_token, char)
-    tok = tok.replace('\r', '')
-
     return tok
 
 
-def tokenize_python(s, keep_comments=False):
+def replace_general_string_tok(tok):
+    return (
+        tok.replace(" ", " ▁ ")
+            .replace("\n", " STRNEWLINE ")
+            .replace("\t", " TABSYMBOL ")
+    )
+
+
+def process_string(tok, char2tok, tok2char, is_comment, do_whole_processing=True):
+    if not (do_whole_processing or is_comment):
+        return tok.replace("\n", "\\n").replace("\r", "")
+
+    if is_comment:
+        tok = re.sub(" +", " ", tok)
+        tok = re.sub(r"(.)\1\1\1\1+", r"\1\1\1\1\1", tok)
+        if len(re.sub(r"\W", "", tok)) < 2:
+            return ""
+    tok = replace_general_string_tok(tok)
+    tok = replace_tokens(tok, char2tok)
+    if tok.strip().startswith("STOKEN00"):
+        if " STRNEWLINE " in tok:
+            tok = tok.replace(" STRNEWLINE ", " ENDCOM", 1)
+        else:
+            tok += " ENDCOM"
+    if not do_whole_processing:
+        tok = replace_tokens(
+            tok, {f" {key} ": value for key, value in tok2char.items()}
+        )
+        tok = (
+            tok.replace(" ▁ ", " ")
+                .replace(" TABSYMBOL ", "\t")
+                .replace("\\r", "")
+                .replace(" STRNEWLINE ", "\\n")
+        )
+        return tok
+
+    tok = re.sub(" +", " ", tok)
+    tok = tokenize_v14_international(tok)
+    tok = re.sub(" +", " ", tok)
+    tok = tok.replace("\r", "")
+    for special_token, char in tok2char.items():
+        tok = tok.replace(special_token, char)
+    if tok[0].isalpha():
+        # for special strings, (e.g. L "s" we should remove the space after L)
+        tok = tok.replace(f"{tok[0]} ", tok[0])
+    return tok
+
+
+def tokenize_python(code, keep_comments=False, process_strings=True):
+    assert isinstance(code, str)
+    code = code.replace(r"\r", "")
+    code = code.replace("\r", "")
+    tokens = []
+
     try:
-        assert isinstance(s, str)
-        s = s.replace(r'\r', '')
-        tokens = []
+        iterator = tokenize.tokenize(BytesIO(code.encode("utf-8")).readline)
+    except SyntaxError as excep:
+        raise SyntaxError(excep)
 
+    removed_docstr = 0
+    while True:
         try:
-            iterator = tokenize.tokenize(BytesIO(s.encode('utf-8')).readline)
-        except SyntaxError as excep:
-            raise SyntaxError(excep)
+            toktype, tok, _, _, line = next(iterator)
+        except (
+                tokenize.TokenError,
+                IndentationError,
+                SyntaxError,
+                UnicodeDecodeError,
+        ) as e:
+            raise ValueError(
+                f'Impossible to parse tokens because of incorrect source code "{e}" ...'
+            )
+        except StopIteration:
+            raise Exception(f"End of iterator before ENDMARKER token.")
 
-        removed_docstr = 0
-        while True:
-            try:
-                toktype, tok, _, _, line = next(iterator)
-            except (tokenize.TokenError, IndentationError, SyntaxError, UnicodeDecodeError):
-                raise Exception(
-                    f"Impossible to parse tokens because icorrect source code \"{s[0:30]}\" ...")
-            except StopIteration:
-                raise Exception(f"End of iterator before ENDMARKER token.")
+        if toktype == tokenize.ENCODING or toktype == tokenize.NL:
+            continue
 
-            if toktype == tokenize.ENCODING or toktype == tokenize.NL:
+        elif toktype == tokenize.NEWLINE:
+            if removed_docstr == 1:
+                removed_docstr = 0
+                continue
+            tokens.append("NEW_LINE")
+
+        elif toktype == tokenize.COMMENT:
+            if keep_comments:
+                com = process_string(
+                    tok,
+                    PYTHON_CHAR2TOKEN,
+                    PYTHON_TOKEN2CHAR,
+                    True,
+                    do_whole_processing=process_strings,
+                )
+                if len(com) > 0:
+                    tokens.append(com)
+            else:
                 continue
 
-            elif toktype == tokenize.NEWLINE:
-                if removed_docstr == 1:
-                    removed_docstr = 0
+        elif toktype == tokenize.STRING:
+            if tok == line.strip():  # docstring
+                if not keep_comments:
+                    removed_docstr = 1
                     continue
-                tokens.append('NEW_LINE')
-
-            elif toktype == tokenize.COMMENT:
-                if keep_comments:
-                    com = process_string(
-                        tok, PYTHON_CHAR2TOKEN, PYTHON_TOKEN2CHAR, True)
-                    if len(com) > 0:
-                        tokens.append(com)
                 else:
-                    continue
-
-            elif toktype == tokenize.STRING:
-                if tok == line.strip():  # docstring
-                    if not keep_comments:
-                        removed_docstr = 1
-                        continue
+                    coms = process_string(
+                        tok,
+                        PYTHON_CHAR2TOKEN,
+                        PYTHON_TOKEN2CHAR,
+                        False,
+                        do_whole_processing=process_strings,
+                    )
+                    if len(coms) > 0:
+                        tokens.append(coms)
                     else:
-                        coms = process_string(
-                            tok, PYTHON_CHAR2TOKEN, PYTHON_TOKEN2CHAR, True)
-                        if len(coms) > 0:
-                            tokens.append(coms)
-                        else:
-                            removed_docstr = 1
-                else:
-                    tokens.append(process_string(
-                        tok, PYTHON_CHAR2TOKEN, PYTHON_TOKEN2CHAR, False))
-
-            elif toktype == tokenize.INDENT:
-                tokens.append('INDENT')
-
-            elif toktype == tokenize.DEDENT:
-                # empty block
-                if tokens[-1] == 'INDENT':
-                    tokens = tokens[:-1]
-                else:
-                    tokens.append('DEDENT')
-
-            elif toktype == tokenize.ENDMARKER:
-                tokens.append('ENDMARKER')
-                break
-
+                        removed_docstr = 1
             else:
-                tokens.append(tok)
+                tokens.append(
+                    process_string(
+                        tok,
+                        PYTHON_CHAR2TOKEN,
+                        PYTHON_TOKEN2CHAR,
+                        False,
+                        do_whole_processing=process_strings,
+                    )
+                )
 
-        assert (tokens[-1] == 'ENDMARKER'), "Error, no end marker"
-        return tokens[:-1]
-    except KeyboardInterrupt:
-        raise
-    except:
-        return []
+        elif toktype == tokenize.INDENT:
+            tokens.append("INDENT")
+
+        elif toktype == tokenize.DEDENT:
+            # empty block
+            if tokens[-1] == "INDENT":
+                tokens = tokens[:-1]
+            else:
+                tokens.append("DEDENT")
+
+        elif toktype == tokenize.ENDMARKER:
+            tokens.append("ENDMARKER")
+            break
+
+        else:
+            tokens.append(tok)
+
+    assert tokens[-1] == "ENDMARKER", "Error, no end marker"
+    return tokens[:-1]
 
 
-def detokenize_python(s):
-    try:
-        assert isinstance(s, str) or isinstance(s, list)
-        if isinstance(s, list):
-            s = ' '.join(s)
-        s = s.replace('ENDCOM', 'NEW_LINE')
-        s = s.replace('▁', 'SPACETOKEN')
-
-        lines = s.split('NEW_LINE')
-        tabs = ''
-        for i, line in enumerate(lines):
+def detokenize_code(self, code):
+    # replace recreate lines with \n and appropriate indent / dedent
+    # removing indent/ dedent tokens
+    assert isinstance(code, str) or isinstance(code, list)
+    if isinstance(code, list):
+        code = " ".join(code)
+    code = code.replace("ENDCOM", "NEW_LINE")
+    code = code.replace("▁", "SPACETOKEN")
+    lines = code.split("NEW_LINE")
+    tabs = ""
+    for i, line in enumerate(lines):
+        line = line.strip()
+        if line.startswith("INDENT "):
+            tabs += "    "
+            line = line.replace("INDENT ", tabs)
+        elif line.startswith("DEDENT"):
+            number_dedent = line.count("DEDENT")
+            tabs = tabs[4 * number_dedent:]
+            line = line.replace("DEDENT", "")
             line = line.strip()
-            if line.startswith('INDENT '):
-                tabs += '    '
-                line = line.replace('INDENT ', tabs)
-            elif line.startswith('DEDENT'):
-                number_dedent = line.count('DEDENT')
-                tabs = tabs[4 * number_dedent:]
-                line = line.replace("DEDENT", '')
-                line = line.strip()
-                line = tabs + line
-            elif line == 'DEDENT':
-                line = ''
-            else:
-                line = tabs + line
-            lines[i] = line
-        untok_s = '\n'.join(lines)
-
-        # find string and comment with parser and detokenize string correctly
-        try:
-            for toktype, tok, _, _, line in tokenize.tokenize(BytesIO(untok_s.encode('utf-8')).readline):
-                if toktype == tokenize.STRING or toktype == tokenize.COMMENT:
-                    tok_ = tok.replace('STRNEWLINE', '\n').replace(
-                        'TABSYMBOL', '\t').replace(' ', '').replace('SPACETOKEN', ' ')
-                    untok_s = untok_s.replace(tok, tok_)
-        except KeyboardInterrupt:
-            raise
-        except:
-            pass
-
-        # detokenize imports
-        untok_s = untok_s.replace('. ', '.').replace(' .', '.').replace(
-            'import.', 'import .').replace('from.', 'from .')
-        untok_s = untok_s.replace('> >', '>>').replace('< <', '<<')
-        return untok_s
+            line = tabs + line
+        elif line == "DEDENT":
+            line = ""
+        else:
+            line = tabs + line
+        lines[i] = line
+    untok_s = "\n".join(lines)
+    # find string and comment with parser and detokenize string correctly
+    try:
+        for toktype, tok, _, _, line in tokenize.tokenize(
+                BytesIO(untok_s.encode("utf-8")).readline
+        ):
+            if toktype == tokenize.STRING or toktype == tokenize.COMMENT:
+                tok_ = (
+                    tok.replace("STRNEWLINE", "\n")
+                        .replace("TABSYMBOL", "\t")
+                        .replace(" ", "")
+                        .replace("SPACETOKEN", " ")
+                )
+                untok_s = untok_s.replace(tok, tok_)
     except KeyboardInterrupt:
         raise
     except:
-        return ''
+        # TODO raise ValueError(f'Invalid python function \n {code}\n')
+        pass
+    # detokenize imports
+    untok_s = (
+        untok_s.replace(". ", ".")
+            .replace(" .", ".")
+            .replace("import.", "import .")
+            .replace("from.", "from .")
+    )
+    # special strings
+    string_modifiers = ["r", "u", "f", "rf", "fr", "b", "rb", "br"]
+    for modifier in string_modifiers + [s.upper() for s in string_modifiers]:
+        untok_s = untok_s.replace(f" {modifier} '", f" {modifier}'").replace(
+            f' {modifier} "', f' {modifier}"'
+        )
+    untok_s = untok_s.replace("> >", ">>").replace("< <", "<<")
+    return untok_s
 
 
 def extract_functions_python_with_docstring(function):

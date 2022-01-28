@@ -1,22 +1,28 @@
 ### Little Guide to download Github data from Google Big Query
 
-The following guide is borrowed from [here](https://github.com/facebookresearch/TransCoder#little-guide-to-download-github-from-google-big-query). 
-We followed this guide to download the Github data.
-However, the guide may not work as the downloading process from BigQuery has probably changed.
+**[Update]** We provide a step-by-step guide in
+this [PDF](https://github.com/wasiahmad/PLBART/blob/main/data/bigquery_guide.pdf)
+.
+
+The following guide is borrowed
+from [here](https://github.com/facebookresearch/TransCoder#little-guide-to-download-github-from-google-big-query). We
+followed this guide to download the Github data in this project.
 
 - Create a Google platform account (you will be given $300 free credit that is sufficient to download the Github data).
 - Create a Google Big Query project [here](https://console.cloud.google.com/projectselector2/bigquery).
 - In this project, create a dataset.
-- In this dataset, create one table per programming language. The results of each SQL request (one per language) will be stored in these tables.
-- Before running your SQL request, make sure you change the query settings to save the query results in the dedicated table (more -> Query Settings -> Destination -> table for query results -> put table name)
+- In this dataset, create one table per programming language. The results of each SQL request (one per language) will be
+  stored in these tables.
+- Before running your SQL request, make sure you change the query settings to save the query results in the dedicated
+  table (more -> Query Settings -> Destination -> table for query results -> put table name)
 - Run your SQL request (one per language and dont forget to change the table for each request)
 - Export your results to google Cloud :
-  - In google cloud storage, create a bucket and a folder per language into it
-  - Export your table to this bucket (EXPORT -> Export to GCS -> export format JSON , compression GZIP)
+    - In google cloud storage, create a bucket and a folder per language into it
+    - Export your table to this bucket (EXPORT -> Export to GCS -> export format JSON , compression GZIP)
 - To download the bucket on your machine, use the API gsutil:
-  - `pip install gsutil`
-  - `gsutil config -> to config gsutil with your google account`
-  - copy your bucket on your machine -> `gsutil -m cp -r gs://name_of_bucket/name_of_folder .`
+    - `pip install gsutil`
+    - `gsutil config -> to config gsutil with your google account`
+    - copy your bucket on your machine -> `gsutil -m cp -r gs://name_of_bucket/name_of_folder .`
 
 **NOTE** We set `name_of_folder` to `java` and `python` for respective source files.
 
@@ -36,14 +42,12 @@ WHERE
     AND f.path like '%.py'
 ```
 
-
 #### Helpful links
 
 - [https://console.cloud.google.com/marketplace/product/github/github-repos](https://console.cloud.google.com/marketplace/product/github/github-repos)
 - [https://cloud.google.com/bigquery/public-data](https://cloud.google.com/bigquery/public-data)
 - [https://cloud.google.com/bigquery/docs/quickstarts/quickstart-web-ui](https://cloud.google.com/bigquery/docs/quickstarts/quickstart-web-ui)
 - [https://hoffa.medium.com/github-on-bigquery-analyze-all-the-code-b3576fd2b150](https://hoffa.medium.com/github-on-bigquery-analyze-all-the-code-b3576fd2b150)
-
 
 ### Preprocessing Github data
 
@@ -54,7 +58,7 @@ WHERE
 - [sacrebleu](https://pypi.org/project/sacrebleu/) (`pip install sacrebleu=="1.2.11"`)
 
 #### Preprocess
-    
+
 ```
 python -m preprocessing.preprocess \
     path_2_github_data \

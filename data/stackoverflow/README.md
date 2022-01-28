@@ -1,6 +1,6 @@
 ### Collect and Preprocess Stack Overflow Data
 
-We collect the StackOverflow posts (include both questions and answers, exclude code snippets) by downloading the data 
+We collect the StackOverflow posts (include both questions and answers, exclude code snippets) by downloading the data
 dump (date: 7th September 2020) from [stackexchange](https://archive.org/download/stackexchange).
 
 ```

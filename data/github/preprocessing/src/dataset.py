@@ -29,9 +29,9 @@ class Language:
 
     def __init__(self, root, lang):
         self.folder = Path(str(root)).joinpath(lang)
+        self.l = lang
         assert self.folder.is_dir(
         ), f"failed to initalize Language {self.l}, there is no directory {str(self.folder)}"
-        self.l = lang
 
     def process_json_and_tok(self, keep_comments, executor=None):
         if executor is None:

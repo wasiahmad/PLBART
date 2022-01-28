@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
-CURRENT_DIR=`pwd`
-HOME_DIR=`realpath ../..`;
+CURRENT_DIR=$(pwd)
+HOME_DIR=$(realpath ../..)
 
 DATA_HOME=${CURRENT_DIR}/data
 SPM_MODEL=${HOME_DIR}/sentencepiece/sentencepiece.bpe.model
 langs=java,python,en_XX,javascript,php,ruby,go
 
 DATA_DIR=""
-for (( idx=0; idx<=3; idx++ )); do
+for ((idx = 0; idx <= 3; idx++)); do
     DATA_DIR+="${DATA_HOME}/shards/shard${idx}"
     if [[ $idx < 3 ]]; then
         DATA_DIR+=":"
@@ -78,4 +78,4 @@ fairseq-train $DATA_DIR \
     --seed 1234 \
     --restore-file $SAVE_DIR/checkpoint_last.pt \
     --tensorboard-logdir $TENSORBOARD_LOGDIR \
-    2>&1 | tee $SAVE_DIR/output.log;
+    2>&1 | tee $SAVE_DIR/output.log

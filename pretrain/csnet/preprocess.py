@@ -11,17 +11,6 @@ from multiprocessing import Pool, cpu_count
 from data.github.preprocessing.src.code_tokenizer import tokenize_java, tokenize_python
 
 
-def count_file_lines(file_path):
-    """
-    Counts the number of lines in a file using wc utility.
-    :param file_path: path to file
-    :return: int, no of lines
-    """
-    num = subprocess.check_output(['wc', '-l', file_path])
-    num = num.decode('utf-8').split(' ')
-    return int(num[0])
-
-
 def process_bimodal_instance(ex):
     code = ' '.join(ex['code_tokens'])
     code = re.sub("[\n\r\t ]+", " ", code).strip()

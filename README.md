@@ -2,9 +2,11 @@
 
 <h1>PLBART</h1>
 
-Official code release of our NAACL 2021 work, [Unified Pre-training for Program Understanding and Generation](https://www.aclweb.org/anthology/2021.naacl-main.211/). 
+Official code release of our NAACL 2021
+work, [Unified Pre-training for Program Understanding and Generation](https://www.aclweb.org/anthology/2021.naacl-main.211/)
+.
 
-**\*\*\*\*\* PLBART's performances on the downstream tasks are recored in this 
+**\*\*\*\*\* PLBART's performances on the downstream tasks are recorded in this
 [spreadsheet](https://docs.google.com/spreadsheets/d/18qfy-zUgXDKcXqR9NB0HsLRdYAmMQZdVSbcJ6M3JKs8). \*\*\*\*\***
 
 <p align="center">
@@ -24,9 +26,10 @@ ______________________________________________________________________
 
 ## PLBART is a Transformer model
 
-- PLBART is a sequence-to-sequence model pre-trained on a large collection Java and Python functions and natural 
-language descriptions collected from Github and StackOverflow, respectively. 
-- PLBART is pre-trained via denoising autoencoding (DAE) and uses three noising strategies: token masking, token deletion, and token infilling (shown below in the three examples).
+- PLBART is a sequence-to-sequence model pre-trained on a large collection Java and Python functions and natural
+  language descriptions collected from Github and StackOverflow, respectively.
+- PLBART is pre-trained via denoising autoencoding (DAE) and uses three noising strategies: token masking, token
+  deletion, and token infilling (shown below in the three examples).
 
 <div align="center">
 
@@ -59,24 +62,24 @@ language descriptions collected from Github and StackOverflow, respectively.
 
 ______________________________________________________________________
 
-
 ## News
 
 - November 2021: Released PLBART-large (12L-1024H-16A) checkpoint
-- October 2021: [Released PLBART checkpoints pre-trained on CodeSearchNet](https://github.com/wasiahmad/PLBART/blob/main/pretrain/csnet/README.md)
-- August 2021: [Multilingual multi-task learning using PLBART](https://github.com/wasiahmad/PLBART/blob/main/multilingual/README.md)
+- October
+  2021: [Released PLBART checkpoints pre-trained on CodeSearchNet](https://github.com/wasiahmad/PLBART/blob/main/pretrain/csnet/README.md)
+- August
+  2021: [Multilingual multi-task learning using PLBART](https://github.com/wasiahmad/PLBART/blob/main/multilingual/README.md)
 - July 2021: Released PLBART checkpoints fine-tuned on downstream tasks
 - June 2021: Official code release
 - March 2021: Pre-release of source code
 
 ______________________________________________________________________
 
-
 ## Setup
 
-We can setup a conda environment in order to run PLBART experiments, the first step is to download the dependencies. 
-We assume [anaconda](https://www.anaconda.com/) is installed. The additional requirements 
-(noted in [requirements.txt](https://github.com/wasiahmad/PLBART/blob/main/requirements.txt)) can be installed by 
+We can setup a conda environment in order to run PLBART experiments, the first step is to download the dependencies. We
+assume [anaconda](https://www.anaconda.com/) is installed. The additional requirements
+(noted in [requirements.txt](https://github.com/wasiahmad/PLBART/blob/main/requirements.txt)) can be installed by
 running the following script:
 
 ```
@@ -84,7 +87,6 @@ bash install_env.sh
 ```
 
 ______________________________________________________________________
-
 
 ## Pre-training
 
@@ -104,9 +106,9 @@ bash binarize.sh
 bash pretrain.sh GPU_IDS
 ```
 
-**[Note]** We pre-trained PLBART on 8 `GeForce RTX 2080` (11gb) GPUs (took ~11.5 days). If you want to pre-train PLBART 
-using more GPUs or GPUs with more memory, adjust `MAX_SENTENCES`, `MAX_TOKENS`, `UPDATE_FREQ` accordingly to maintain an 
-effective batch size of 2048. According to [fairseq](https://github.com/pytorch/fairseq), effective batch size is equal 
+**[Note]** We pre-trained PLBART on 8 `GeForce RTX 2080` (11gb) GPUs (took ~11.5 days). If you want to pre-train PLBART
+using more GPUs or GPUs with more memory, adjust `MAX_SENTENCES`, `MAX_TOKENS`, `UPDATE_FREQ` accordingly to maintain an
+effective batch size of 2048. According to [fairseq](https://github.com/pytorch/fairseq), effective batch size is equal
 to:
 
 <p align="center">
@@ -221,19 +223,26 @@ ______________________________________________________________________
 
 ## FAQs
 
-__[NOTE] We present the file structure of this repository [here](https://github.com/wasiahmad/PLBART/blob/main/FILEs.md).__
+__[NOTE] We present the file structure of this repository [here](https://github.com/wasiahmad/PLBART/blob/main/FILEs.md)
+.__
+
+__How to download Github data from Google BigQuery?__
+
+We provided a detailed guide [here](https://github.com/wasiahmad/PLBART/blob/main/data/bigquery_guide.pdf)
+.
 
 __Mismatch in performance reported in the paper and achieved using the released checkpoints.__
 
-There is a difference between PLBART's performances mentioned in the paper and the performance achieved with
-the released checkpoints. We noted them [here](https://docs.google.com/spreadsheets/d/18qfy-zUgXDKcXqR9NB0HsLRdYAmMQZdVSbcJ6M3JKs8/edit?usp=sharing).
-Note that, there is no change in the hyper-parameter setting. We provided the exact same value we used in the bash 
-scripts. The performance difference we observed is perhaps due to running experiments at different point of time. 
-Although we didn't but we recommend to fine-tune PLBART with multiple different seeds and report the average scores. 
+There is a difference between PLBART's performances mentioned in the paper and the performance achieved with the
+released checkpoints. We noted
+them [here](https://docs.google.com/spreadsheets/d/18qfy-zUgXDKcXqR9NB0HsLRdYAmMQZdVSbcJ6M3JKs8/edit?usp=sharing). Note
+that, there is no change in the hyper-parameter setting. We provided the exact same value we used in the bash scripts.
+The performance difference we observed is perhaps due to running experiments at different point of time. Although we
+didn't but we recommend to fine-tune PLBART with multiple different seeds and report the average scores.
 
 __`mbart_base` task is not present in `fairseq==0.9.0` official release.__
 
-Although we used `fairseq==0.9.0` but we used a different commit which consists of `mbart_base` task. You may do the 
+Although we used `fairseq==0.9.0` but we used a different commit which consists of `mbart_base` task. You may do the
 following which should work.
 
 ```
@@ -243,7 +252,8 @@ git checkout 698e3b91ffa832c286c48035bdff78238b0de8ae
 pip install .
 ```
 
-Otherwise, you may consider installing `fairseq==0.10.0`. Please refer to this [issue](https://github.com/wasiahmad/PLBART/issues/12#issuecomment-881332837) 
+Otherwise, you may consider installing `fairseq==0.10.0`. Please refer to
+this [issue](https://github.com/wasiahmad/PLBART/issues/12#issuecomment-881332837)
 to make other adjustments.
 
 __What can be the maximum input and output lengths for PLBART?__
@@ -254,14 +264,16 @@ ______________________________________________________________________
 
 ## Acknowledgement
 
-PLBART uses [Fairseq](https://github.com/pytorch/fairseq), [codeXglue](https://github.com/microsoft/CodeXGLUE), and [TransCoder](https://github.com/facebookresearch/TransCoder) and thanks the authors of these works for their contribution.
+PLBART uses [Fairseq](https://github.com/pytorch/fairseq), [codeXglue](https://github.com/microsoft/CodeXGLUE),
+and [TransCoder](https://github.com/facebookresearch/TransCoder) and thanks the authors of these works for their
+contribution.
 
 ______________________________________________________________________
 
 ## License
 
-Contents of this repository is under the [MIT license](https://opensource.org/licenses/MIT). The license 
-applies to the pre-trained and fine-tuned models as well.
+Contents of this repository is under the [MIT license](https://opensource.org/licenses/MIT). The license applies to the
+pre-trained and fine-tuned models as well.
 
 ______________________________________________________________________
 
