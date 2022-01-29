@@ -1,4 +1,6 @@
-### [[MBPP] Mostly Basic Python Problems](https://github.com/google-research/google-research/tree/master/mbpp)
+## [[MBPP] Mostly Basic Python Problems](https://github.com/google-research/google-research/tree/master/mbpp)
+
+We modified Human-Eval code to support MBPP evaluation. Here we briefly discuss how we did it.
 
 Every example is a JSON object that has the following keys.
 
@@ -48,9 +50,9 @@ assert min_cost([[3, 4, 5], [6, 10, 4], [3, 7, 5]], 2, 2) == 16
 We can perform evaluation on MBPP by running:
 
 ``` 
-# evaluate plbart_base on human-eval using GPU-0
-bash evaluate.sh 0 human-eval base
+# evaluate plbart_base on MBPP using sampling
+bash evaluate.sh 0 mbpp sampling base
 ```
 
-**Note that**, PLBART is trained to auto-complete function, therefore PLBART is not expected to perform well on MBPP
-since the dataset consists of complete python programs.
+**[Note]** MBPP dataset consists of complete python programs. Therefore, we did not evaluate PLBART on MBPP as we only
+trained PLBART to auto-complete functions.
