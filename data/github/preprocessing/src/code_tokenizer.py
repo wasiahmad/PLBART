@@ -225,7 +225,7 @@ def tokenize_python(code, keep_comments=False, process_strings=True):
     return tokens[:-1]
 
 
-def detokenize_code(self, code):
+def detokenize_code(code):
     # replace recreate lines with \n and appropriate indent / dedent
     # removing indent/ dedent tokens
     assert isinstance(code, str) or isinstance(code, list)
